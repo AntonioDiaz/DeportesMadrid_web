@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="ISO-8859-1">
+    <file url="file://$PROJECT_DIR$/src/main/java/com/adiaz/madrid/daos/GenericDAO.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Partidos_20180312.csv" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/login.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/navbar.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/navbar_menu.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/popup.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/taglibs.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/template.jsp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/web/WEB-INF/jsp/template_notitle.jsp" charset="ISO-8859-1" />
+    <file url="PROJECT" charset="ISO-8859-1" />
+  </component>
+</project>
