@@ -1,0 +1,39 @@
+<!-- Indices written at Thu, 15 Mar 2018 13:26:28 CET -->
+
+<datastore-indexes>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Competition" ancestor="false" source="auto">
+        <property name="codTemporada" direction="asc"/>
+        <property name="codCompeticion" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Competition" ancestor="false" source="auto">
+        <property name="codCompeticion" direction="asc"/>
+        <property name="codTemporada" direction="asc"/>
+        <property name="codFase" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Competition" ancestor="false" source="auto">
+        <property name="codCompeticion" direction="asc"/>
+        <property name="codFase" direction="asc"/>
+        <property name="codTemporada" direction="asc"/>
+        <property name="codGrupo" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="Match" ancestor="false" source="auto">
+        <property name="competitionRef" direction="asc"/>
+        <property name="weekNum" direction="asc"/>
+        <property name="matchNum" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="ClassificationEntry" ancestor="false" source="auto">
+        <property name="competitionRef" direction="asc"/>
+        <property name="position" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>

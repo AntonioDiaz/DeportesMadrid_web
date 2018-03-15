@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:component-scan base-package="com.adiaz.madrid.controllers" />
+    <context:component-scan base-package="com.adiaz.madrid.daos" />
+    <context:component-scan base-package="com.adiaz.madrid.services" />
+    <context:component-scan base-package="com.adiaz.madrid.services.security" />
+    <context:component-scan base-package="com.adiaz.madrid.forms.validators" />
+    <context:component-scan base-package="com.adiaz.madrid.forms.utils" />
+    <context:component-scan base-package="com.adiaz.madrid.utils" />
+
+    <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+        <property name="order" value="1" />
+    </bean>
+
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>/WEB-INF/tiles-definitions.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="initDataBase" class="com.adiaz.madrid.utils.RegisterEntities" init-method="init"/>
+
+    <bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource" id="messageSource"
+          p:basenames="WEB-INF/i18n/messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" />
+
+    <mvc:annotation-driven></mvc:annotation-driven>
+</beans>

@@ -1,0 +1,125 @@
+body {
+    font-family: 'Noto Sans', serif;
+    font-size: 16px;
+}
+
+.localsports-title {
+    margin-top: 5px;
+}
+
+input:-webkit-autofill {
+    border: 1px solid #ccc;
+    -webkit-box-shadow: inset 0 0 0px 9999px white;
+}
+
+input:focus,
+input:-webkit-autofill:focus {
+    border-color: #66afe9;
+    -webkit-box-shadow: inset 0 0 0px 9999px white,
+    0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.tdlink:hover {
+    background: #555;
+}
+
+.divlink {
+    text-align: center;
+    margin: 0px;
+}
+
+.divlink:hover {
+    cursor: pointer;
+}
+
+.div_button_list {
+    padding-right: 5px; padding-left: 5px;
+}
+
+.modal-header-localsports {
+    background: #0061A8; color: #fff;
+}
+
+.modal-body-localsports {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.close-localsports {
+    opacity: 1;
+    color: #ffffff;
+}
+.close-localsports:hover, .close-localsports:focus {
+    opacity: 1;
+    color: #ffffff;
+}
+
+.modal-row-localsports {
+    margin-bottom: 10px;
+}
+
+.modal-row-localsports-title {
+    font-size: 18px;
+    margin-bottom: 10px
+}
+.updated_field {
+    color: white;
+    background: red;
+    padding-left: 5px;
+}
+
+.font_title{font-size: 30px}
+.font_subtitle{font-size: 20px}
+.custom-header {background: #000000; color: #ffffff;padding: 5px;}
+
+#classificationTable td {
+    text-align:center;
+    vertical-align:middle;
+    font-size: 13px;
+}
+
+#classificationTable th {
+    text-align:center;
+    vertical-align:middle;
+    font-size: 13px;
+}
+
+#issuesTable td {
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    vertical-align: middle
+}
+
+.hideextra {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}
+
+.paragraph_normal {
+    margin-bottom: 5px;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.hide_to_print {
+    display: none;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.result_list {
+    font-size: 12px;
+}
