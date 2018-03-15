@@ -1,3 +1,6 @@
 ./out
 ./target
 ./src/main/resources/*.csv
+./src/main/resources/Partidos_20180312.csv
+./src/main/resources/Partidos_20180313.csv
+./src/main/resources/clasificaciones_20180220.csv
