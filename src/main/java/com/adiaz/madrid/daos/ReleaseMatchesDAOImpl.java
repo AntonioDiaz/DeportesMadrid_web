@@ -1,6 +1,6 @@
 package com.adiaz.madrid.daos;
 
-import com.adiaz.madrid.entities.Release;
+import com.adiaz.madrid.entities.ReleaseMatches;
 import com.googlecode.objectify.Key;
 import org.springframework.stereotype.Repository;
 
@@ -10,20 +10,20 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
 @Repository
-public class ReleaseDAOImpl implements ReleaseDAO {
+public class ReleaseMatchesDAOImpl implements ReleaseMatchesDAO {
 
     @Override
-    public Key<Release> create(Release item) throws Exception {
+    public Key<ReleaseMatches> create(ReleaseMatches item) throws Exception {
         return ofy().save().entity(item).now();
     }
 
     @Override
-    public boolean update(Release item) throws Exception {
+    public boolean update(ReleaseMatches item) throws Exception {
         boolean updateResult;
         if (item == null || item.getId() == null) {
             updateResult = false;
         } else {
-            Release c = ofy().load().type(Release.class).id(item.getId()).now();
+            ReleaseMatches c = ofy().load().type(ReleaseMatches.class).id(item.getId()).now();
             if (c != null) {
                 ofy().save().entity(item).now();
                 updateResult = true;
@@ -35,17 +35,19 @@ public class ReleaseDAOImpl implements ReleaseDAO {
     }
 
     @Override
-    public void remove(Long id) throws Exception {
-        ofy().delete().type(Release.class).id(id).now();
+    public void remove(String id) throws Exception {
+        ofy().delete().type(ReleaseMatches.class).id(id).now();
     }
 
     @Override
-    public Release findById(Long id) {
-        return ofy().load().type(Release.class).id(id).now();
+    public ReleaseMatches findById(String id) {
+        return ofy().load().type(ReleaseMatches.class).id(id).now();
     }
 
     @Override
-    public List<Release> findAll() {
-        return ofy().load().type(Release.class).list();
+    public List<ReleaseMatches> findAll() {
+        return ofy().load().type(ReleaseMatches.class).orderKey(true).list();
     }
+
+
 }

@@ -4,8 +4,9 @@
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Actualizaciones<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/release/list">Lista de Actualizaciones</a></li>
-                    <li><a href="/release/check">Comprobar Actualizacion</a></li>
+                    <li><a href="/releases/release_list_matches">Actualizaciones de partidos</a></li>
+                    <li><a href="/releases/release_list_classifications">Actualizaciones de clasificaciones</a></li>
+                    <li><a href="/releases/check">Comprobar Actualizacion</a></li>
                 </ul>
             </li>
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Entidades<span class="caret"></span></a>

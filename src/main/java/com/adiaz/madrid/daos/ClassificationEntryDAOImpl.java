@@ -39,8 +39,8 @@ public class ClassificationEntryDAOImpl implements ClassificationDAO {
     }
 
     @Override
-    public void create(Collection<ClassificationEntry> values) {
-        ofy().save().entities(values);
+    public void insertList(Collection<ClassificationEntry> values) {
+        ofy().save().entities(values).now();
     }
 
     @Override
@@ -66,12 +66,12 @@ public class ClassificationEntryDAOImpl implements ClassificationDAO {
     }
 
     @Override
-    public void remove(Long id) throws Exception {
+    public void remove(String id) throws Exception {
         ofy().delete().type(ClassificationEntry.class).id(id).now();
     }
 
     @Override
-    public ClassificationEntry findById(Long id) {
+    public ClassificationEntry findById(String id) {
         return ofy().load().type(ClassificationEntry.class).id(id).now();
     }
 

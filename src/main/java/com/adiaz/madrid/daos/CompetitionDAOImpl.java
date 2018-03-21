@@ -37,12 +37,12 @@ public class CompetitionDAOImpl implements CompetitionDAO {
     }
 
     @Override
-    public void remove(Long id) throws Exception {
+    public void remove(String id) throws Exception {
         ofy().delete().type(Competition.class).id(id);
     }
 
     @Override
-    public Competition findById(Long id) {
+    public Competition findById(String id) {
         return ofy().load().type(Competition.class).id(id).now();
     }
 
@@ -51,6 +51,7 @@ public class CompetitionDAOImpl implements CompetitionDAO {
         return ofy().load().type(Competition.class).list();
     }
 
+    // TODO: 19/3/18 remove this method.
     @Override
     public Competition findCompetition(String idCompetition) {
         Key<Competition> key = Key.create(Competition.class, idCompetition);
@@ -58,7 +59,7 @@ public class CompetitionDAOImpl implements CompetitionDAO {
     }
 
     @Override
-    public void createCompetitions(Collection<Competition> competitions) throws Exception {
+    public void insertList(Collection<Competition> competitions) throws Exception {
         ofy().save().entities(competitions).now();
     }
 

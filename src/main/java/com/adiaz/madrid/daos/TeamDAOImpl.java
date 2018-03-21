@@ -58,6 +58,6 @@ public class TeamDAOImpl implements TeamDAO {
 
     @Override
     public void insertList(Collection<Team> teamList) {
-        ofy().save().entities(teamList);
+        ofy().save().entities(teamList).now();
     }
 }

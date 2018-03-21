@@ -8,7 +8,15 @@ public class DeportesMadridConstants {
     public static final String DESCANSA = "DESCANSA";
 
     public enum MATCH_STATE {
-        PENDIENTE(0, "Pendiente"), FINALIZADO(1, "Finalizado"), SUSPENDIDO(2, "Suspendido"), NO_PRESENTADO(3, "No presentado"), APLAZADO(4, "Aplazado"), DESCONOCIDO(5, "Desconocido");
+        PENDIENTE(0, "Pendiente"),
+        REPROGRAMADO (1, "Reprogramado"),
+        COMITE(2, "Comite"),
+        FINALIZADO(3, "Finalizado"),
+        SUSPENDIDO(4, "Suspendido"),
+        NO_PRESENTADO(5, "No presentado"),
+        APLAZADO(6, "Aplazado"),
+        DESCONOCIDO(7, "Desconocido");
+
         private int value;
         private String stateDesc;
 
@@ -28,10 +36,13 @@ public class DeportesMadridConstants {
         public static MATCH_STATE createState(char input) {
             switch(input) {
                 case ' ': return PENDIENTE;
+                case 'A': return REPROGRAMADO;
+                case 'C': return COMITE;
                 case 'F': return FINALIZADO;
                 case 'S': return SUSPENDIDO;
                 case 'N': return NO_PRESENTADO;
                 case 'O': return APLAZADO;
+                case 'R': return DESCONOCIDO;
                 default: return DESCONOCIDO;
             }
             //throw new RuntimeException("Case not implemented");

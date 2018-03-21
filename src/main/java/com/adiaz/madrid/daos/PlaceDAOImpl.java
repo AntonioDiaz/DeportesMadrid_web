@@ -56,7 +56,7 @@ public class PlaceDAOImpl implements PlaceDAO {
     }
 
     @Override
-    public void create(Collection<Place> places) {
+    public void insertList(Collection<Place> places) {
         ofy().save().entities(places).now();
     }
 

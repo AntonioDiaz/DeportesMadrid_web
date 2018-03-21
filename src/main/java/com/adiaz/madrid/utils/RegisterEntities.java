@@ -5,7 +5,6 @@ import com.adiaz.madrid.entities.*;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.QueryKeys;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,7 +22,8 @@ public class RegisterEntities {
     public void init() throws Exception {
 
 
-        ObjectifyService.register(Release.class);
+        ObjectifyService.register(ReleaseMatches.class);
+        ObjectifyService.register(ReleaseClassification.class);
         ObjectifyService.register(User.class);
         ObjectifyService.register(Team.class);
         ObjectifyService.register(Place.class);
@@ -32,8 +32,11 @@ public class RegisterEntities {
         ObjectifyService.register(ClassificationEntry.class);
 
         /* clean DB. */
+        /*
         try {
-            List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
+            List<Key<ReleaseClassification>> listReleaseClassification = ofy().load().type(ReleaseClassification.class).keys().list();
+            ofy().delete().keys(listReleaseClassification);
+            List<Key<ReleaseMatches>> listRelease = ofy().load().type(ReleaseMatches.class).keys().list();
             ofy().delete().keys(listRelease);
             List<Key<Competition>> listCompetitions = ofy().load().type(Competition.class).keys().list();
             ofy().delete().keys(listCompetitions);
@@ -54,6 +57,7 @@ public class RegisterEntities {
         } finally {
             ofy().clear();
         }
+        */
         logger.debug("init DataBase finished");
     }
 }

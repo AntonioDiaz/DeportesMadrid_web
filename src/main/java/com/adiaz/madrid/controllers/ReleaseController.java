@@ -1,8 +1,13 @@
 package com.adiaz.madrid.controllers;
 
-import com.adiaz.madrid.entities.Release;
+import com.adiaz.madrid.entities.ReleaseClassification;
+import com.adiaz.madrid.entities.ReleaseMatches;
 import com.adiaz.madrid.services.ReleaseManager;
+import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.adiaz.madrid.utils.DeportesMadridUtils;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
+
 
 @Controller
-@RequestMapping("/release")
+@RequestMapping("/releases")
 public class ReleaseController {
 
     public static final Logger logger = Logger.getLogger(ReleaseController.class);
@@ -24,57 +31,43 @@ public class ReleaseController {
     @Autowired
     ReleaseManager releaseManager;
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ModelAndView list(@RequestParam(value = "delete_done", defaultValue = "false") boolean deleteDone) {
-        ModelAndView modelAndView = new ModelAndView("release_list");
-        modelAndView.addObject("releaseList", releaseManager.queryAllRelease());
+    @RequestMapping(value = "/release_list_matches", method = RequestMethod.GET)
+    public ModelAndView releaseListMatches(@RequestParam(value = "delete_done", defaultValue = "false") boolean deleteDone) {
+        ModelAndView modelAndView = new ModelAndView("release_list_matches");
+        modelAndView.addObject("releaseList", releaseManager.queryAllReleaseMatches());
         modelAndView.addObject("delete_done", deleteDone);
         return modelAndView;
     }
 
-    @RequestMapping(value = "/check", method = RequestMethod.GET)
-    public ModelAndView check() throws Exception {
-        ModelAndView modelAndView = new ModelAndView("release_check");
-        String releaseAvailable = DeportesMadridUtils.getLastReleasePublished();
-        modelAndView.addObject("last_release_available", releaseAvailable);
-        Release lastRelease = releaseManager.lastRelease();
-        if (lastRelease!=null) {
-            modelAndView.addObject("last_release_loaded", lastRelease);
-            modelAndView.addObject("is_last_release_loaded", lastRelease.getPublishDateStr().equals(releaseAvailable));
-        }
-
-        modelAndView.addObject("need_create", false);
-        modelAndView.addObject("need_bucket", false);
-        modelAndView.addObject("need_teams", false);
-        modelAndView.addObject("need_places", false);
-        modelAndView.addObject("need_competitions", false);
-        modelAndView.addObject("need_matches", false);
-        modelAndView.addObject("need_classification", false);
-
-        //check if load is necesary.
-        if (lastRelease==null || !lastRelease.getPublishDateStr().equals(releaseAvailable)) {
-            modelAndView.addObject("need_create", true);
-        } else if (!lastRelease.getUpdatedBucket()) {
-            modelAndView.addObject("need_bucket", true);
-        } else if (!lastRelease.getUpdatedTeams()) {
-            modelAndView.addObject("need_teams", true);
-        } else if (!lastRelease.getUpdatedPlaces()) {
-            modelAndView.addObject("need_places", true);
-        } else if (!lastRelease.getUpdateCompetitions()) {
-            modelAndView.addObject("need_competitions", true);
-        } else if (!lastRelease.getUpdatedMatches()) {
-            modelAndView.addObject("need_matches", true);
-        } else if (!lastRelease.getUpdatedClassification()) {
-            modelAndView.addObject("need_classification", true);
-        }
+    @RequestMapping(value = "/release_list_classifications", method = RequestMethod.GET)
+    public ModelAndView releaseListClassification(@RequestParam(value = "delete_done", defaultValue = "false") boolean deleteDone) {
+        ModelAndView modelAndView = new ModelAndView("release_list_classifications");
+        modelAndView.addObject("releaseList", releaseManager.queryAllReleaseClassifications());
+        modelAndView.addObject("delete_done", deleteDone);
         return modelAndView;
     }
 
-    @RequestMapping(value = "/createRelease", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/check", method = RequestMethod.GET)
+    public ModelAndView check() throws Exception {
+        ModelAndView modelAndView = new ModelAndView("release_check");
+        String releaseAvailableMatches = DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_MATCHES);
+        String releaseAvailableClassifications = DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_CLASSIFICATION);
+        modelAndView.addObject("last_release_available_matches", releaseAvailableMatches);
+        modelAndView.addObject("last_release_available_classifications", releaseAvailableClassifications);
+        ReleaseMatches lastReleaseMatches = releaseManager.queryReleaseMatches(releaseAvailableMatches);
+        ReleaseClassification releaseClassification = releaseManager.queryReleaseClassifications(releaseAvailableClassifications);
+        modelAndView.addObject("lastReleaseMatches", lastReleaseMatches);
+        modelAndView.addObject("lastReleaseClassifications", releaseClassification);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/enqueueTask", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String createRelease() throws Exception {
+    public String enqueueTask() throws Exception {
         try {
-            releaseManager.createEmptyRelease();
+            Queue queue = QueueFactory.getDefaultQueue();
+            queue.add(TaskOptions.Builder.withUrl("/releases/createReleaseTask"));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return ERROR;
@@ -82,11 +75,62 @@ public class ReleaseController {
         return DONE;
     }
 
-    @RequestMapping(value = "/loadBucket", method = RequestMethod.GET)
+    @RequestMapping(value = "/createReleaseMatches", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String loadBucket(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String createReleaseMatchescreateRelease() throws Exception {
         try {
-            releaseManager.loadBucket(idRelease);
+            releaseManager.createOrGetLastReleasePublishedMatches();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/createReleaseClassification", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String createReleaseClassification() throws Exception {
+        try {
+            releaseManager.createOrGetLastReleasePublishedClassification();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/createReleaseTask", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String createReleaseTask() throws Exception {
+        logger.debug("started task " + new Date());
+        try {
+            //search if release existis before.
+            releaseManager.updateDataStore();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw e;
+        }
+        logger.debug("ended task");
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/loadBucketMatches", method = RequestMethod.GET)
+    @ResponseBody
+    public String loadBucketMatches(@RequestParam(value = "id_release") String idRelease) throws Exception {
+        try {
+            releaseManager.loadBucketMatches(idRelease);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/loadBucketClassification", method = RequestMethod.GET)
+    @ResponseBody
+    public String loadBucketClassification(@RequestParam(value = "id_release") String idRelease) throws Exception {
+        try {
+            releaseManager.loadBucketClassification(idRelease);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return ERROR;
@@ -96,7 +140,7 @@ public class ReleaseController {
 
     @RequestMapping(value = "/loadTeams", method = RequestMethod.GET)
     @ResponseBody
-    public String loadTeams(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String loadTeams(@RequestParam(value = "id_release") String idRelease) throws Exception {
         try {
             releaseManager.updateTeams(idRelease);
         } catch (Exception e) {
@@ -108,7 +152,7 @@ public class ReleaseController {
 
     @RequestMapping(value = "/loadPlaces", method = RequestMethod.GET)
     @ResponseBody
-    public String loadPlaces(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String loadPlaces(@RequestParam(value = "id_release") String idRelease) throws Exception {
         try {
             releaseManager.updatePlaces(idRelease);
         } catch (Exception e) {
@@ -120,7 +164,7 @@ public class ReleaseController {
 
     @RequestMapping(value = "/loadCompetitions", method = RequestMethod.GET)
     @ResponseBody
-    public String loadCompetitions(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String loadCompetitions(@RequestParam(value = "id_release") String idRelease) throws Exception {
         try {
             releaseManager.updateCompetitions(idRelease);
         } catch (Exception e) {
@@ -132,7 +176,7 @@ public class ReleaseController {
 
     @RequestMapping(value = "/loadMatches", method = RequestMethod.GET)
     @ResponseBody
-    public String loadMatches(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String loadMatches(@RequestParam(value = "id_release") String idRelease) throws Exception {
         try {
             releaseManager.updateMatches(idRelease);
         } catch (Exception e) {
@@ -144,7 +188,7 @@ public class ReleaseController {
 
     @RequestMapping(value = "/loadClassifications", method = RequestMethod.GET)
     @ResponseBody
-    public String loadClassifications(@RequestParam(value = "id_release") Long idRelease) throws Exception {
+    public String loadClassifications(@RequestParam(value = "id_release") String idRelease) throws Exception {
         try {
             releaseManager.updateClassifications(idRelease);
         } catch (Exception e) {
@@ -154,9 +198,15 @@ public class ReleaseController {
         return DONE;
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String delete(@RequestParam(value = "id_release") Long id) throws Exception {
-        releaseManager.removeRelease(id);
-        return "redirect:/release/list?delete_done=true";
+    @RequestMapping(value = "/delete_release_matches", method = RequestMethod.GET)
+    public String deleteReleaseMatches(@RequestParam(value = "id_release") String id) throws Exception {
+        releaseManager.removeReleaseMatches(id);
+        return "redirect:/releases/release_list_matches?delete_done=true";
+    }
+
+    @RequestMapping(value = "/delete_release_classifications", method = RequestMethod.GET)
+    public String deleteReleaseClassifications(@RequestParam(value = "id_release") String id) throws Exception {
+        releaseManager.removeReleaseClassification(id);
+        return "redirect:/releases/release_list_classifications?delete_done=true";
     }
 }

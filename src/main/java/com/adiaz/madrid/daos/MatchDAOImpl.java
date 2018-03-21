@@ -38,12 +38,12 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public void remove(Long id) throws Exception {
+    public void remove(String id) throws Exception {
         ofy().delete().type(Match.class).id(id);
     }
 
     @Override
-    public Match findById(Long id) {
+    public Match findById(String id) {
         return ofy().load().type(Match.class).id(id).now();
     }
 
@@ -65,8 +65,8 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public void create(Collection<Match> matchList) {
-        ofy().save().entities(matchList);
+    public void insertList(Collection<Match> matchList) {
+        ofy().save().entities(matchList).now();
     }
 
     @Override

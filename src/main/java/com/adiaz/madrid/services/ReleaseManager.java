@@ -1,32 +1,41 @@
 package com.adiaz.madrid.services;
 
-import com.adiaz.madrid.entities.Release;
+import com.adiaz.madrid.entities.ReleaseClassification;
+import com.adiaz.madrid.entities.ReleaseMatches;
 
 import java.util.List;
 
 public interface ReleaseManager {
 
-    void addRelease(Release release) throws Exception;
+    void removeReleaseMatches(String id) throws Exception;
 
-    boolean updateRelease(Release release) throws Exception;
+    void removeReleaseClassification(String id) throws Exception;
 
-    void removeRelease(Long id) throws Exception;
+    List<ReleaseMatches> queryAllReleaseMatches();
 
-    List<Release> queryAllRelease();
+    List<ReleaseClassification> queryAllReleaseClassifications();
 
-    Release lastRelease();
+    ReleaseMatches queryReleaseMatches(String id);
 
-    void createEmptyRelease() throws Exception;
+    ReleaseClassification queryReleaseClassifications(String id);
 
-    void loadBucket(Long idRelease) throws Exception;
+    ReleaseMatches createOrGetLastReleasePublishedMatches() throws Exception;
 
-    void updateTeams(Long idRelease) throws Exception;
+    ReleaseClassification createOrGetLastReleasePublishedClassification() throws Exception;
 
-    void updatePlaces(Long idRelease) throws Exception;
+    void loadBucketMatches(String idRelease) throws Exception;
 
-    void updateCompetitions(Long idRelease) throws Exception;
+    void loadBucketClassification(String idRelease) throws Exception;
 
-    void updateMatches(Long idRelease) throws Exception;
+    void updateTeams(String idRelease) throws Exception;
 
-    void updateClassifications(Long idRelease) throws Exception;
+    void updatePlaces(String idRelease) throws Exception;
+
+    void updateCompetitions(String idRelease) throws Exception;
+
+    void updateMatches(String idRelease) throws Exception;
+
+    void updateClassifications(String idRelease) throws Exception;
+
+    void updateDataStore() throws Exception;
 }

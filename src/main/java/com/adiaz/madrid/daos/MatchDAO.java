@@ -7,8 +7,8 @@ import com.googlecode.objectify.Ref;
 import java.util.Collection;
 import java.util.List;
 
-public interface MatchDAO extends GenericDAO<Match> {
+public interface MatchDAO extends GenericDAO<Match, String> {
     int recordsCount();
     List<Match> findByCompeticion(String idCompeticion);
-    void create(Collection<Match> matchList);
+    void insertList(Collection<Match> matchList);
 }

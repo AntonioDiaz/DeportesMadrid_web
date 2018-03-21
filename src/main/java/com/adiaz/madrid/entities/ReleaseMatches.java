@@ -4,25 +4,27 @@ package com.adiaz.madrid.entities;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 @Entity
 @Data
-public class Release {
+@EqualsAndHashCode
+public class ReleaseMatches {
     @Id
-    private Long id;
-    String publishUrlMatches;
-    String publishUrlClassification;
-    String publishDateStr;
+    String id;
+    String publishUrl;
     Date dateInitLoad;
     Date dateEndLoad;
-    Integer recordsClassification;
-    Integer recordsMatches;
     Boolean updatedBucket;
     Boolean updatedTeams;
     Boolean updatedPlaces;
-    Boolean updateCompetitions;
+    Boolean updatedCompetitions;
     Boolean updatedMatches;
-    Boolean updatedClassification;
+    Integer lines;
+    Integer linesTeams;
+    Integer linesPlaces;
+    Integer linesCompetitions;
+    Integer linesMatches;
 }

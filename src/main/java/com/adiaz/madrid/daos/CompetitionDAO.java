@@ -5,12 +5,12 @@ import com.adiaz.madrid.entities.Competition;
 import java.util.Collection;
 import java.util.List;
 
-public interface CompetitionDAO extends GenericDAO<Competition> {
+public interface CompetitionDAO extends GenericDAO<Competition, String> {
 
 
     Competition findCompetition(String idCompetition);
 
-    void createCompetitions(Collection<Competition> competitions) throws Exception;
+    void insertList(Collection<Competition> competitions) throws Exception;
 
     List<Competition> distinctTemporadas();
 

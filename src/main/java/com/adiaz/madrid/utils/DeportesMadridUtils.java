@@ -12,25 +12,15 @@ import java.util.Date;
 
 public class DeportesMadridUtils {
 
-    public static String getLastReleasePublishedUrlMatches() throws Exception {
-        String url = DeportesMadridConstants.URL_MATCHES;
+    public static String getLastReleasePublishedUrl(String url) throws Exception {
         HttpURLConnection con = (HttpURLConnection) (new URL(url).openConnection());
         con.setInstanceFollowRedirects(false);
         con.connect();
         return con.getHeaderField("Location");
     }
 
-    public static String getLastReleasePublishedUrlClassification() throws Exception {
-        String url = DeportesMadridConstants.URL_CLASSIFICATION;
-        HttpURLConnection con = (HttpURLConnection) (new URL(url).openConnection());
-        con.setInstanceFollowRedirects(false);
-        con.connect();
-        return con.getHeaderField("Location");
-    }
-
-
-    public static String getLastReleasePublished() throws Exception {
-        String location = getLastReleasePublishedUrlMatches();
+    public static String getLastReleasePublished(String url) throws Exception {
+        String location = getLastReleasePublishedUrl(url);
         String fileName = null;
         if (StringUtils.isNotBlank(location)) {
             fileName = FilenameUtils.getName(location);

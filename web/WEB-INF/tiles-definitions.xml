@@ -25,14 +25,17 @@
         <put-attribute name="title" value="Deportes Madrid"/>
         <put-attribute name="navbar" value="menu_empty"/>
     </definition>
+
     <definition name="error_page" extends="homeTemplate">
         <put-attribute name="page_title" value="No se ha podido completar la operación" />
         <put-attribute name="body" value="/WEB-INF/jsp/error_body.jsp" />
     </definition>
+
     <definition name="error_page_static" extends="homeTemplateNoMenu">
         <put-attribute name="page_title" value="No se ha podido completar la operacion" />
         <put-attribute name="body" value="/WEB-INF/jsp/error_page_static.jsp" />
     </definition>
+
     <definition name="login" template="/WEB-INF/jsp/login.jsp">
         <put-attribute name="title" value="Deportes Madrid"/>
     </definition>
@@ -42,9 +45,14 @@
         <put-attribute name="body" value="/WEB-INF/jsp/home.jsp"/>
     </definition>
 
-    <definition name="release_list" extends="homeTemplate">
-        <put-attribute name="page_title" value="Lista de actualizaciones"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/release_list.jsp"/>
+    <definition name="release_list_matches" extends="homeTemplate">
+        <put-attribute name="page_title" value="Lista de actualizaciones de partidos"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/release_list_matches.jsp"/>
+    </definition>
+
+    <definition name="release_list_classifications" extends="homeTemplate">
+        <put-attribute name="page_title" value="Lista de actualizaciones de classificaciones"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/release_list_classifications.jsp"/>
     </definition>
 
     <definition name="release_check" extends="homeTemplate">

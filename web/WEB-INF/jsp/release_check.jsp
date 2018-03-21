@@ -3,16 +3,31 @@
 
     $(document).ready(function () {});
 
-    function fBtnCreate(){
+    function fBtnTask(){
         switchLoading(true);
-        var params = {};
-        peticionJqueryAjax("createRelease", params);
+        peticionJqueryAjax("enqueueTask", {});
     }
 
-    function fBtnBucket(idRelease){
+    function fBtnCreateReleaseMatches(){
+        switchLoading(true);
+        peticionJqueryAjax("createReleaseMatches", {});
+    }
+
+    function fBtnCreateReleaseClassification(){
+        switchLoading(true);
+        peticionJqueryAjax("createReleaseClassification", {});
+    }
+
+    function fBtnBucketMatches(idRelease){
         switchLoading(true);
         var params = {id_release: idRelease};
-        peticionJqueryAjax("loadBucket", params);
+        peticionJqueryAjax("loadBucketMatches", params);
+    }
+
+    function fBtnBucketClassification(idRelease){
+        switchLoading(true);
+        var params = {id_release: idRelease};
+        peticionJqueryAjax("loadBucketClassification", params);
     }
 
     function fBtnTeams(idRelease){
@@ -53,8 +68,8 @@
         }).done((data, textStatus, jqXHR) => {
             console.log('La solicitud se ha completado correctamente.');
             console.log( data );
-            showDialogAlert("done resultado: " + data, ()=>{
-                window.location.href = "/release/check";
+            showDialogAlert("Resultado de la acción: " + data, ()=>{
+                window.location.href = "/releases/check";
             });
             switchLoading(false);
         }).fail((jqXHR, textStatus, errorThrown) => {
@@ -84,89 +99,202 @@
         <tbody>
             <tr>
                 <td class="col-sm-3">Actualizacion disponible</td>
-                <td>${last_release_available}</td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm-4">Partidos: ${last_release_available_matches}</div>
+                        <div class="col-sm-4">Classificaciones: ${last_release_available_classifications}</div>
+                        <div class="col-sm-4">
+                            &nbsp;
+                        </div>
+                    </div>
+                </td>
             </tr>
             <tr>
-                <td>Última actualización cargada</td>
-                <td>${last_release_loaded.publishDateStr}</td>
+                <td>Última actualización creada</td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            Partidos: ${lastReleaseMatches.id}
+                            <br>
+                            Líneas fichero ${lastReleaseMatches.lines}
+                        </div>
+                        <div class="col-sm-4">
+                            Classificaciones: ${lastReleaseClassifications.id}
+                            <br>
+                            Líneas fichero ${lastReleaseClassifications.lines}
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-success btn-block" onclick="fBtnTask()">Lanzar tarea</button>
+                        </div>
+                    </div>
+                </td>
             </tr>
             <tr>
-                <td>Crear release
+                <td>
+                    Crear releaseMatches
                 </td>
                 <td>
-                    <c:if test="${need_create}">
-                        <button id="btnBucket" type="button" class="btn btn-primary" onclick="fBtnCreate()">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${not need_create}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null}">
+                                <div class="bg-success text-white">done</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null}">
+                                <div class="bg-danger text-white">pendiente</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnCreateReleaseMatches()">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
-                <td>Copiar ficheros a GCS
+                <td>Copiar a GCS & actualiza líneas
                 </td>
                 <td>
-                    <c:if test="${need_bucket}">
-                        <button id="btnBucket" type="button" class="btn btn-primary" onclick="fBtnBucket(${last_release_loaded.id})">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updatedBucket}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null && lastReleaseMatches.updatedBucket}">
+                                <div class="bg-success text-white">done</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null || !lastReleaseMatches.updatedBucket}">
+                                <div class="bg-danger text-white">pendiente</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnBucketMatches(${lastReleaseMatches.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Actualizar Equipos</td>
                 <td>
-                    <c:if test="${need_teams}">
-                        <button id="btnTeams" type="button" class="btn btn-primary" onclick="fBtnTeams(${last_release_loaded.id})">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updatedTeams}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null && lastReleaseMatches.updatedTeams}">
+                                <div class="bg-success text-white">done (${lastReleaseMatches.linesTeams})</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null || !lastReleaseMatches.updatedTeams}">
+                                <div class="bg-danger text-white">pendiente (${lastReleaseMatches.linesTeams})</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnTeams(${lastReleaseMatches.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Actualizar Campos</td>
                 <td>
-                    <c:if test="${need_places}">
-                        <button type="button" class="btn btn-primary" onclick="fBtnPlaces(${last_release_loaded.id})">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updatedPlaces}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null && lastReleaseMatches.updatedPlaces}">
+                                <div class="bg-success text-white">done (${lastReleaseMatches.linesPlaces})</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null || !lastReleaseMatches.updatedPlaces}">
+                                <div class="bg-danger text-white">pendiente (${lastReleaseMatches.linesPlaces})</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnPlaces(${lastReleaseMatches.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Actualizar Competiciones</td>
                 <td>
-                    <c:if test="${need_competitions}">
-                        <button type="button" class="btn btn-primary" onclick="fBtnCompetitions(${last_release_loaded.id});">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updateCompetitions}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null && lastReleaseMatches.updatedCompetitions}">
+                                <div class="bg-success text-white">done (${lastReleaseMatches.linesCompetitions})</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null || !lastReleaseMatches.updatedCompetitions}">
+                                <div class="bg-danger text-white">pendiente (${lastReleaseMatches.linesCompetitions})</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnCompetitions(${lastReleaseMatches.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Actualizar Partidos</td>
                 <td>
-                    <c:if test="${need_matches}">
-                        <button type="button" class="btn btn-primary" onclick="fBtnMatches(${last_release_loaded.id})">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updatedMatches}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseMatches!=null && lastReleaseMatches.updatedMatches}">
+                                <div class="bg-success text-white">done (${lastReleaseMatches.linesMatches})</div>
+                            </c:if>
+                            <c:if test="${lastReleaseMatches==null || !lastReleaseMatches.updatedMatches}">
+                                <div class="bg-danger text-white">pendiente (${lastReleaseMatches.linesMatches})</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnMatches(${lastReleaseMatches.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Crear releaseClassification
+                </td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseClassifications!=null}">
+                                <div class="bg-success text-white">done</div>
+                            </c:if>
+                            <c:if test="${lastReleaseClassifications==null}">
+                                <div class="bg-danger text-white">pendiente</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnCreateReleaseClassification()">Lanzar proceso</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Copiar a GCS & actualiza líneas
+                </td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseClassifications!=null && lastReleaseClassifications.updatedBucket}">
+                                <div class="bg-success text-white">done</div>
+                            </c:if>
+                            <c:if test="${lastReleaseClassifications==null || !lastReleaseClassifications.updatedBucket}">
+                                <div class="bg-danger text-white">pendiente</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnBucketClassification(${lastReleaseClassifications.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>Actualizar clasificaciones</td>
                 <td>
-                    <c:if test="${need_classification}">
-                        <button type="button" class="btn btn-primary" onclick="fBtnClassification(${last_release_loaded.id})">Lanzar proceso</button>
-                    </c:if>
-                    <c:if test="${is_last_release_loaded && last_release_loaded.updatedClassification}">
-                        <div class="bg-success text-white">DONE</div>
-                    </c:if>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <c:if test="${lastReleaseClassifications!=null && lastReleaseClassifications.updatedClassification}">
+                                <div class="bg-success text-white">done (${lastReleaseClassifications.linesClassification})</div>
+                            </c:if>
+                            <c:if test="${lastReleaseClassifications==null || !lastReleaseClassifications.updatedClassification}">
+                                <div class="bg-danger text-white">pendiente (${lastReleaseClassifications.linesClassification})</div>
+                            </c:if>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary btn-block" onclick="fBtnClassification(${lastReleaseClassifications.id})">Lanzar proceso</button>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </tbody>

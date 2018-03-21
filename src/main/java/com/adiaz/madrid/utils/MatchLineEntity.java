@@ -12,7 +12,7 @@ public class MatchLineEntity {
     public MatchLineEntity(String line) {
         //logger.debug("line " + line);
         try {
-            String[] split = line.split(";");
+            String[] split = line.split(";", -1);
             field00_codTemporada = Integer.parseInt(split[0].trim());
             field01_codCompeticion = split[1].trim();
             field02_codFase = Integer.parseInt(split[2].trim());
