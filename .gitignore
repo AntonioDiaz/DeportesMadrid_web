@@ -2,3 +2,8 @@ out
 target
 src/main/resources/*.csv
 .idea
+compiler.xml
+libraries
+misc.xml
+modules.xml
+workspace.xml
