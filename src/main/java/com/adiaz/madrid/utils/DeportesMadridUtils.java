@@ -1,5 +1,6 @@
 package com.adiaz.madrid.utils;
 
+import com.adiaz.madrid.entities.Competition;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,6 +52,10 @@ public class DeportesMadridUtils {
         return output;
     }
 
+    public static String generateIdCompetition(Competition c) throws Exception{
+        return generateIdCompetition(c.getCodTemporada(), c.getCodCompeticion(), c.getCodFase(), c.getCodGrupo());
+    }
+
     public static String generateIdCompetition(Integer codTemporada, String codCompeticion, Integer codFase, Integer codGrupo)
             throws Exception {
         if(codTemporada!=null && StringUtils.isNotBlank(codCompeticion) && codFase!=null && codGrupo!=null) {
@@ -69,7 +74,7 @@ public class DeportesMadridUtils {
     }
 
     public static String generateIdClassification(Integer codTemporada, String codCompeticion, Integer codFase,
-                                                  Integer codGrupo, Integer codEquipo) throws Exception {
+                                                  Integer codGrupo, Long codEquipo) throws Exception {
         if(codTemporada!=null && StringUtils.isNotBlank(codCompeticion) && codFase!=null && codGrupo!=null && codEquipo!=null) {
             return codTemporada + "|" + codCompeticion + "|" + codFase + "|" + codGrupo + "|" + codEquipo;
         }

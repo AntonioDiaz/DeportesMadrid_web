@@ -8,22 +8,20 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude={"competition", "team"})
 public class ClassificationEntry {
 
     @Id
     private String id;
 
-    @Load
     @Index
-    @JsonIgnore
-    private Ref<Competition> competitionRef;
-    private Competition competition;
+    private String idCompetition;
 
-    @Load
+
     @Index
-    @JsonIgnore
-    private Ref<Team> teamRef;
+    Long idTeam;
+
+    private Competition competition;
     private Team team;
 
     @Index
@@ -36,13 +34,4 @@ public class ClassificationEntry {
     private Integer pointsFavor;
     private Integer pointsAgainst;
 
-    @OnLoad
-    public void getRefs(){
-        if (competitionRef!=null && competitionRef.isLoaded()) {
-            competition = competitionRef.get();
-        }
-        if (teamRef!=null && teamRef.isLoaded()) {
-            team = teamRef.get();
-        }
-    }
 }

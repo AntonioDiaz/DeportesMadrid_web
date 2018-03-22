@@ -43,7 +43,11 @@ public class TeamDAOImpl implements TeamDAO {
 
     @Override
     public Team findById(Long id) {
-        return ofy().load().type(Team.class).id(id).now();
+        if (id==0) {
+            return null;
+        }
+        Team team = ofy().load().type(Team.class).id(id).now();
+        return team;
     }
 
     @Override
@@ -58,6 +62,6 @@ public class TeamDAOImpl implements TeamDAO {
 
     @Override
     public void insertList(Collection<Team> teamList) {
-        ofy().save().entities(teamList).now();
+        ofy().save().entities(teamList);
     }
 }

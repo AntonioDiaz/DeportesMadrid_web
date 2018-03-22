@@ -1,6 +1,10 @@
 package com.adiaz.madrid.services;
 
+import com.adiaz.madrid.daos.CompetitionDAO;
 import com.adiaz.madrid.daos.MatchDAO;
+import com.adiaz.madrid.daos.PlaceDAO;
+import com.adiaz.madrid.daos.TeamDAO;
+import com.adiaz.madrid.entities.Competition;
 import com.adiaz.madrid.entities.Match;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -17,6 +21,15 @@ public class MatchesManagerImpl implements MatchesManager {
     @Autowired
     MatchDAO matchDAO;
 
+    @Autowired
+    CompetitionDAO competitionDAO;
+
+    @Autowired
+    TeamDAO teamDAO;
+
+    @Autowired
+    PlaceDAO placeDAO;
+
     @Override
     public int matchesCount() {
         return matchDAO.recordsCount();
@@ -24,6 +37,15 @@ public class MatchesManagerImpl implements MatchesManager {
 
     @Override
     public List<Match> findMatchesByCompetition(String idCompeticion) {
-        return matchDAO.findByCompeticion(idCompeticion);
+        Competition competition = competitionDAO.findCompetition(idCompeticion);
+        List<Match> matchList = matchDAO.findByCompeticion(idCompeticion);
+
+        for (Match match : matchList) {
+            match.setCompetition(competition);
+            match.setTeamLocal(teamDAO.findById(match.getIdTeamLocal()));
+            match.setTeamVisitor(teamDAO.findById(match.getIdTeamVisitor()));
+            match.setPlace(placeDAO.findById(match.getIdPlace()));
+        }
+        return  matchList;
     }
 }

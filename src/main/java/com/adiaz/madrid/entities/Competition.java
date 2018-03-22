@@ -35,10 +35,4 @@ public class Competition {
     @Index
     private String distrito;
 
-    public String generateId() throws Exception {
-        if(codTemporada!=null && StringUtils.isNotBlank(codCompeticion) && codFase!=null && codGrupo!=null) {
-            return DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
-        }
-        throw new Exception("Not possible to create id");
-    }
 }

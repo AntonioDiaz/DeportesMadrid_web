@@ -1,6 +1,7 @@
 package com.adiaz.madrid.daos;
 
 import com.adiaz.madrid.entities.Competition;
+import com.adiaz.madrid.utils.DeportesMadridUtils;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.Query;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,7 @@ public class CompetitionDAOImpl implements CompetitionDAO {
 
     @Override
     public Key<Competition> create(Competition item) throws Exception {
-        item.setId(item.generateId());
+        item.setId(DeportesMadridUtils.generateIdCompetition(item));
         return ofy().save().entity(item).now();
     }
 
@@ -60,7 +61,7 @@ public class CompetitionDAOImpl implements CompetitionDAO {
 
     @Override
     public void insertList(Collection<Competition> competitions) throws Exception {
-        ofy().save().entities(competitions).now();
+        ofy().save().entities(competitions);
     }
 
     @Override

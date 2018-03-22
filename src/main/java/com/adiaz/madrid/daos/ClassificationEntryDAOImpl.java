@@ -30,17 +30,15 @@ public class ClassificationEntryDAOImpl implements ClassificationDAO {
 
     @Override
     public List<ClassificationEntry> findByCompeticion(String idCompeticion) {
-        Key<Competition> key = Key.create(Competition.class, idCompeticion);
-        Ref<Competition> competitionRef = Ref.create(key);
         Query<ClassificationEntry> query = ofy().load().type(ClassificationEntry.class)
-                .filter("competitionRef", competitionRef)
+                .filter("idCompetition", idCompeticion)
                 .order("position");
         return query.list();
     }
 
     @Override
     public void insertList(Collection<ClassificationEntry> values) {
-        ofy().save().entities(values).now();
+        ofy().save().entities(values);
     }
 
     @Override

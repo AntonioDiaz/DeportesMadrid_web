@@ -18,7 +18,6 @@ import java.util.List;
 @EqualsAndHashCode
 public class User implements UserDetails {
 
-
     @Id
     private String username;
 

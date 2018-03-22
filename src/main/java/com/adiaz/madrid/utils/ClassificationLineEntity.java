@@ -17,7 +17,7 @@ public class ClassificationLineEntity {
             field01_codCompeticion = split[1].trim();
             field02_codFase = Integer.parseInt(split[2].trim());
             field03_codGrupo = Integer.parseInt(split[3].trim());
-            field04_codEquipo = Integer.parseInt(split[4].trim());
+            field04_codEquipo = Long.parseLong(split[4].trim());
             field05_posicion = Integer.parseInt(split[5].trim());
             field06_puntos = Integer.parseInt(split[6].trim());
             field07_partidosJugados = Integer.parseInt(split[7].trim());
@@ -45,7 +45,7 @@ public class ClassificationLineEntity {
     private String field01_codCompeticion;
     private Integer field02_codFase;
     private Integer field03_codGrupo;
-    private Integer field04_codEquipo;
+    private Long field04_codEquipo;
     private Integer field05_posicion;
     private Integer field06_puntos;
     private Integer field07_partidosJugados;

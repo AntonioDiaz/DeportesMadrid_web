@@ -66,15 +66,13 @@ public class MatchDAOImpl implements MatchDAO {
 
     @Override
     public void insertList(Collection<Match> matchList) {
-        ofy().save().entities(matchList).now();
+        ofy().save().entities(matchList);
     }
 
     @Override
     public List<Match> findByCompeticion(String idCompeticion) {
-        Key<Competition> key = Key.create(Competition.class, idCompeticion);
-        Ref<Competition> competitionRef = Ref.create(key);
         Query<Match> query = ofy().load().type(Match.class)
-                .filter("competitionRef", competitionRef)
+                .filter("idCompetition", idCompeticion)
                 .order("weekNum")
                 .order("matchNum");
         return query.list();

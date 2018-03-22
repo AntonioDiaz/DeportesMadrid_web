@@ -42,6 +42,9 @@ public class PlaceDAOImpl implements PlaceDAO {
 
     @Override
     public Place findById(Long id) {
+        if (id==0) {
+            return null;
+        }
         return ofy().load().type(Place.class).id(id).now();
     }
 
@@ -57,7 +60,7 @@ public class PlaceDAOImpl implements PlaceDAO {
 
     @Override
     public void insertList(Collection<Place> places) {
-        ofy().save().entities(places).now();
+        ofy().save().entities(places);
     }
 
 }

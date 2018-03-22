@@ -51,7 +51,7 @@
     </definition>
 
     <definition name="release_list_classifications" extends="homeTemplate">
-        <put-attribute name="page_title" value="Lista de actualizaciones de classificaciones"/>
+        <put-attribute name="page_title" value="Lista de actualizaciones de clasificaciones"/>
         <put-attribute name="body" value="/WEB-INF/jsp/release_list_classifications.jsp"/>
     </definition>
 
