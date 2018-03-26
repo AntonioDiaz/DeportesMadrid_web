@@ -1,31 +1,15 @@
 package com.adiaz.madrid.services;
 
-import com.adiaz.madrid.entities.ReleaseClassification;
-import com.adiaz.madrid.entities.ReleaseMatches;
+import com.adiaz.madrid.entities.Release;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ReleaseManager {
-
-    void removeReleaseMatches(String id) throws Exception;
-
-    void removeReleaseClassification(String id) throws Exception;
-
-    List<ReleaseMatches> queryAllReleaseMatches();
-
-    List<ReleaseClassification> queryAllReleaseClassifications();
-
-    ReleaseMatches queryReleaseMatches(String id);
-
-    ReleaseClassification queryReleaseClassifications(String id);
-
-    ReleaseMatches createOrGetLastReleasePublishedMatches() throws Exception;
-
-    ReleaseClassification createOrGetLastReleasePublishedClassification() throws Exception;
-
-    void loadBucketMatches(String idRelease) throws Exception;
-
-    void loadBucketClassification(String idRelease) throws Exception;
+    
+    List<Release> queryAllRelease();
+    
+    Release queryLastRelease();
 
     void updateTeams(String idRelease) throws Exception;
 
@@ -36,6 +20,12 @@ public interface ReleaseManager {
     void updateMatches(String idRelease) throws Exception;
 
     void updateClassifications(String idRelease) throws Exception;
+
+    void createRelease() throws Exception;
+
+    boolean publishedUpdates(Release release) throws IOException;
+
+    void removeRelease(String id) throws Exception;
 
     void updateDataStore() throws Exception;
 }

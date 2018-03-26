@@ -1,7 +1,6 @@
 package com.adiaz.madrid.controllers;
 
 
-import com.adiaz.madrid.daos.TeamDAO;
 import com.adiaz.madrid.entities.Team;
 import com.adiaz.madrid.services.TeamManager;
 import org.apache.log4j.Logger;

@@ -16,5 +16,6 @@
     </div>
 </div>
 <%@ include file="/WEB-INF/jsp/popup.jsp" %>
+<%@ include file="/WEB-INF/jsp/loading.jsp" %>
 </body>
 </html>

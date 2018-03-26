@@ -51,14 +51,6 @@ public class CompetitionDAOImpl implements CompetitionDAO {
     public List<Competition> findAll() {
         return ofy().load().type(Competition.class).list();
     }
-
-    // TODO: 19/3/18 remove this method.
-    @Override
-    public Competition findCompetition(String idCompetition) {
-        Key<Competition> key = Key.create(Competition.class, idCompetition);
-        return ofy().load().key(key).now();
-    }
-
     @Override
     public void insertList(Collection<Competition> competitions) throws Exception {
         ofy().save().entities(competitions);

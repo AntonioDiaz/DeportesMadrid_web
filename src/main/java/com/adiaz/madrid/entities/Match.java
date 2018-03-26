@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
-@Entity
+@Entity (name = "MATCH_ENTITY")
 @Data
 @EqualsAndHashCode(exclude={"competition", "teamLocal", "teamVisitor", "place"})
 public class Match {
@@ -23,24 +23,29 @@ public class Match {
     @Index
     private Long idTeamLocal;
 
-
     @Index
     private Long idTeamVisitor;
-
 
     @Index
     private Long idPlace;
 
+    @Ignore
     private Competition competition;
+
+    @Ignore
     private Team teamLocal;
+
+    @Ignore
     private Team teamVisitor;
+
+    @Ignore
     private Place place;
 
     @Index
-    private Integer weekNum;
+    private Integer numWeek;
 
     @Index
-    private Integer matchNum;
+    private Integer numMatch;
 
     private Integer scoreLocal;
     private Integer scoreVisitor;

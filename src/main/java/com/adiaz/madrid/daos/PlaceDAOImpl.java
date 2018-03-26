@@ -1,7 +1,6 @@
 package com.adiaz.madrid.daos;
 
 import com.adiaz.madrid.entities.Place;
-import com.adiaz.madrid.entities.Team;
 import com.googlecode.objectify.Key;
 import org.springframework.stereotype.Repository;
 

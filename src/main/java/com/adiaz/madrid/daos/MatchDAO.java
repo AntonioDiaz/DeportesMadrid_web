@@ -1,8 +1,6 @@
 package com.adiaz.madrid.daos;
 
-import com.adiaz.madrid.entities.Competition;
 import com.adiaz.madrid.entities.Match;
-import com.googlecode.objectify.Ref;
 
 import java.util.Collection;
 import java.util.List;

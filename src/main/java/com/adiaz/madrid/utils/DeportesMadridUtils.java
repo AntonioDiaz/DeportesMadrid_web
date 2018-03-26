@@ -87,8 +87,13 @@ public class DeportesMadridUtils {
      * @return
      * @throws ParseException
      */
-    public static Date formatMatchDate(String dateStr) throws ParseException {
+    public static Date stringToDate(String dateStr) throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return df.parse(dateStr);
+    }
+
+    public static String dateToString(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return df.format(date);
     }
 }

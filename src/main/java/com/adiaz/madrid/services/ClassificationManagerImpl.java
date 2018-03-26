@@ -32,7 +32,7 @@ public class ClassificationManagerImpl implements ClassificationManager {
     @Override
     public List<ClassificationEntry> findClassificationByCompetition(String idCompeticion) {
         List<ClassificationEntry> classificationEntryList = classificationDAO.findByCompeticion(idCompeticion);
-        Competition competition = competitionDAO.findCompetition(idCompeticion);
+        Competition competition = competitionDAO.findById(idCompeticion);
         for (ClassificationEntry classificationEntry : classificationEntryList) {
             classificationEntry.setCompetition(competition);
             classificationEntry.setTeam(teamDAO.findById(classificationEntry.getIdTeam()));

@@ -22,8 +22,7 @@ public class RegisterEntities {
     public void init() throws Exception {
 
 
-        ObjectifyService.register(ReleaseMatches.class);
-        ObjectifyService.register(ReleaseClassification.class);
+        ObjectifyService.register(Release.class);
         ObjectifyService.register(User.class);
         ObjectifyService.register(Team.class);
         ObjectifyService.register(Place.class);
@@ -34,9 +33,7 @@ public class RegisterEntities {
         /* clean DB. */
         /*
         try {
-            List<Key<ReleaseClassification>> listReleaseClassification = ofy().load().type(ReleaseClassification.class).keys().list();
-            ofy().delete().keys(listReleaseClassification);
-            List<Key<ReleaseMatches>> listRelease = ofy().load().type(ReleaseMatches.class).keys().list();
+            List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
             ofy().delete().keys(listRelease);
             List<Key<Competition>> listCompetitions = ofy().load().type(Competition.class).keys().list();
             ofy().delete().keys(listCompetitions);

@@ -1,12 +1,10 @@
 package com.adiaz.madrid.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
+@Entity (name = "CLASSIFICATION_ENTITY")
 @Data
 @EqualsAndHashCode(exclude={"competition", "team"})
 public class ClassificationEntry {
@@ -21,7 +19,9 @@ public class ClassificationEntry {
     @Index
     Long idTeam;
 
+    @Ignore
     private Competition competition;
+    @Ignore
     private Team team;
 
     @Index

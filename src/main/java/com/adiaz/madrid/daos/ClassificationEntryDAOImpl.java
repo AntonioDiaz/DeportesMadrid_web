@@ -1,9 +1,7 @@
 package com.adiaz.madrid.daos;
 
 import com.adiaz.madrid.entities.ClassificationEntry;
-import com.adiaz.madrid.entities.Competition;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
 import org.springframework.stereotype.Repository;

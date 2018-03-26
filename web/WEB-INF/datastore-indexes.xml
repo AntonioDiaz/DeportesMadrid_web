@@ -3,4 +3,11 @@
     <datastore-index kind="ReleaseClassification" ancestor="false" source="manual">
         <property name="__key__" direction="desc"/>
     </datastore-index>
+    <datastore-index kind="Competition" ancestor="false" source="manual">
+        <property name="deporte" direction="asc"/>
+        <property name="distrito" direction="asc"/>
+    </datastore-index>
+    <datastore-index kind="Release" ancestor="false" source="manual">
+        <property name="__key__" direction="desc"/>
+    </datastore-index>
 </datastore-indexes>

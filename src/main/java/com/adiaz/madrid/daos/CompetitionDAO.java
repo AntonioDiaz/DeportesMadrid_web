@@ -8,8 +8,6 @@ import java.util.List;
 public interface CompetitionDAO extends GenericDAO<Competition, String> {
 
 
-    Competition findCompetition(String idCompetition);
-
     void insertList(Collection<Competition> competitions) throws Exception;
 
     List<Competition> distinctTemporadas();

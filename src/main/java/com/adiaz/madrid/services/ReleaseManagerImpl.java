@@ -7,7 +7,7 @@ import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.adiaz.madrid.utils.DeportesMadridUtils;
 import com.adiaz.madrid.utils.MatchLineEntity;
 import com.google.appengine.tools.cloudstorage.*;
-import com.googlecode.objectify.Ref;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,6 @@ public class ReleaseManagerImpl implements ReleaseManager {
 
     private static final Logger logger = Logger.getLogger(ReleaseManagerImpl.class);
 
-    private static final String BUCKET_CLASSIFICATION = "deportes_madrid_classification";
-    private static final String BUCKET_MATCHES= "deportes_madrid_matches";
-
     /** Used below to determine the size of chucks to read in. Should be > 1kb and < 10MB */
     private static final int BUFFER_SIZE = 1024 * 1024;
 
@@ -47,12 +44,6 @@ public class ReleaseManagerImpl implements ReleaseManager {
     private static final int LINES_BLOCK_SIZE = 500;
 
     @Autowired
-    ReleaseMatchesDAO releaseMatchesDAO;
-
-    @Autowired
-    ReleaseClassificationDAO releaseClassificationDAO;
-
-    @Autowired
     TeamDAO teamDAO;
 
     @Autowired
@@ -67,116 +58,40 @@ public class ReleaseManagerImpl implements ReleaseManager {
     @Autowired
     ClassificationDAO classificationDAO;
 
+    @Autowired
+    ReleaseDAO releaseDAO;
+
     @Override
-    public void removeReleaseMatches(String id) throws Exception {
-        releaseMatchesDAO.remove(id);
+    public List<Release> queryAllRelease() {
+        return releaseDAO.findAll();
     }
 
     @Override
-    public void removeReleaseClassification(String id) throws Exception {
-        releaseClassificationDAO.remove(id);
-    }
-
-    @Override
-    public List<ReleaseMatches> queryAllReleaseMatches() {
-        return releaseMatchesDAO.findAll();
-    }
-
-    @Override
-    public ReleaseClassification queryReleaseClassifications(String id) {
-        return releaseClassificationDAO.findById(id);
-    }
-
-    @Override
-    public List<ReleaseClassification> queryAllReleaseClassifications() {
-        return releaseClassificationDAO.findAll();
-    }
-
-    @Override
-    public ReleaseMatches createOrGetLastReleasePublishedMatches() throws Exception {
-        String lastReleasePublished = DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_MATCHES);
-        ReleaseMatches release = releaseMatchesDAO.findById(lastReleasePublished);
-        if (release==null) {
-            release = new ReleaseMatches();
-            String urlMatchesStr = DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_MATCHES);
-            release.setId(lastReleasePublished);
-            release.setPublishUrl(urlMatchesStr);
-            release.setUpdatedBucket(false);
-            release.setUpdatedTeams(false);
-            release.setUpdatedPlaces(false);
-            release.setUpdatedMatches(false);
-            release.setUpdatedCompetitions(false);
-            release.setLines(0);
-            release.setLinesTeams(0);
-            release.setLinesPlaces(0);
-            release.setLinesCompetitions(0);
-            release.setLinesMatches(0);
-            release.setLinesMatches(0);
-            releaseMatchesDAO.create(release);
+    public Release queryLastRelease() {
+        Release lastRelease = null;
+        for (Release release : releaseDAO.findAll()) {
+            if (lastRelease==null || lastRelease.getId().compareTo(release.getId())<0) {
+                lastRelease = release;
+            }
         }
-        return release;
-    }
-
-    @Override
-    public ReleaseClassification createOrGetLastReleasePublishedClassification() throws Exception {
-        String lastReleasePublished = DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_CLASSIFICATION);
-        ReleaseClassification release = releaseClassificationDAO.findById(lastReleasePublished);
-        if (release==null) {
-            release = new ReleaseClassification();
-            String urlMatchesStr = DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_CLASSIFICATION);
-            release.setId(lastReleasePublished);
-            release.setPublishUrl(urlMatchesStr);
-            release.setUpdatedBucket(false);
-            release.setUpdatedClassification(false);
-            release.setLines(0);
-            release.setLinesClassification(0);
-            releaseClassificationDAO.create(release);
-        }
-        return release;
-    }
-
-    @Override
-    public ReleaseMatches queryReleaseMatches(String id) {
-        return releaseMatchesDAO.findById(id);
-    }
-
-    @Override
-    public void loadBucketMatches(String idRelease) throws Exception {
-        ReleaseMatches releaseMatches = releaseMatchesDAO.findById(idRelease);
-        copyObjectInBucket(DeportesMadridConstants.URL_MATCHES, BUCKET_MATCHES, idRelease + ".csv");
-        releaseMatches.setUpdatedBucket(true);
-        releaseMatches.setLines(countLines(idRelease, BUCKET_MATCHES));
-        releaseMatchesDAO.update(releaseMatches);
-    }
-
-    @Override
-    public void loadBucketClassification(String idRelease) throws Exception {
-        ReleaseClassification releaseClassification = releaseClassificationDAO.findById(idRelease);
-        copyObjectInBucket(DeportesMadridConstants.URL_CLASSIFICATION, BUCKET_CLASSIFICATION, idRelease + ".csv");
-        releaseClassification.setUpdatedBucket(true);
-        releaseClassification.setLines(countLines(idRelease, BUCKET_CLASSIFICATION));
-        releaseClassificationDAO.update(releaseClassification);
+        return lastRelease;
     }
 
     @Override
     public void updateTeams(String idRelease) throws Exception {
-        ReleaseMatches releaseMatches = releaseMatchesDAO.findById(idRelease);
-        Scanner scanner = getScanner(idRelease, BUCKET_MATCHES);
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
         int linesCount = 1;
         Map<Long, Team> teamsMap = new HashMap<>();
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             linesCount++;
-            if (releaseMatches.getLinesTeams()<=linesCount) {
+            if (release.getLinesTeams()<=linesCount) {
                 MatchLineEntity lineEntity = new MatchLineEntity(line);
-                Team teamLocal = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
-                if (teamLocal != null) {
-                    teamsMap.put(teamLocal.getId(), teamLocal);
-                }
-                Team teamVisitor = addOrUpdateTeam(lineEntity.getField07_codEquipoVisitante(), lineEntity.getField23_equipoVisitante());
-                if (teamVisitor != null) {
-                    teamsMap.put(teamVisitor.getId(), teamVisitor);
+                Team team = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
+                if (team != null) {
+                    teamsMap.put(team.getId(), team);
                 }
                 if (teamsMap.size() > 0 && teamsMap.size() % INSERT_BLOCK_SIZE == 0) {
                     teamDAO.insertList(teamsMap.values());
@@ -184,23 +99,23 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 }
                 if (linesCount % LINES_BLOCK_SIZE == 0) {
                     logger.debug("updateTeams linesCount ->" + linesCount);
-                    releaseMatches.setLinesTeams(linesCount);
-                    releaseMatchesDAO.update(releaseMatches);
+                    release.setLinesTeams(linesCount);
+                    releaseDAO.update(release);
                 }
             }
         }
         scanner.close();
         teamDAO.insertList(teamsMap.values());
-        releaseMatches.setLinesTeams(linesCount);
-        releaseMatches.setUpdatedTeams(true);
-        releaseMatchesDAO.update(releaseMatches);
+        release.setLinesTeams(linesCount);
+        release.setUpdatedTeams(true);
+        releaseDAO.update(release);
         logger.debug("last updateTeams linesCount ->" + linesCount);
     }
 
     @Override
     public void updatePlaces(String idRelease) throws Exception {
-        ReleaseMatches releaseMatches = releaseMatchesDAO.findById(idRelease);
-        Scanner scanner = getScanner(idRelease, BUCKET_MATCHES);
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
         Map<Long, Place> placesMap = new HashMap<>();
         Integer linesCount = 1;
@@ -226,29 +141,29 @@ public class ReleaseManagerImpl implements ReleaseManager {
             }
             if (linesCount % LINES_BLOCK_SIZE == 0) {
                 logger.debug("updateplaces --> " +linesCount );
-                releaseMatches.setLinesPlaces(linesCount);
-                releaseMatchesDAO.update(releaseMatches);
+                release.setLinesPlaces(linesCount);
+                releaseDAO.update(release);
             }
         }
         scanner.close();
         placeDAO.insertList(placesMap.values());
-        releaseMatches.setLinesPlaces(linesCount);
-        releaseMatches.setUpdatedPlaces(true);
-        releaseMatchesDAO.update(releaseMatches);
+        release.setLinesPlaces(linesCount);
+        release.setUpdatedPlaces(true);
+        releaseDAO.update(release);
         logger.debug("last updateplaces --> " +linesCount );
     }
 
     @Override
     public void updateCompetitions(String idRelease) throws Exception {
-        ReleaseMatches releaseMatches = releaseMatchesDAO.findById(idRelease);
-        Scanner scanner = getScanner(idRelease, BUCKET_MATCHES);
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
         Map<String, Competition> competitionMap = new HashMap<>();
         Integer linesCount = 1;
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            if (releaseMatches.getLinesCompetitions()<=linesCount) {
+            if (release.getLinesCompetitions()<=linesCount) {
                 MatchLineEntity matchLineEntity = new MatchLineEntity(line);
                 Competition competition = new Competition();
                 Integer codTemporada = matchLineEntity.getField00_codTemporada();
@@ -277,30 +192,30 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 }
                 if (linesCount % LINES_BLOCK_SIZE == 0) {
                     logger.debug("update competitions --> " + linesCount );
-                    releaseMatches.setLinesCompetitions(linesCount);
-                    releaseMatchesDAO.update(releaseMatches);
+                    release.setLinesCompetitions(linesCount);
+                    releaseDAO.update(release);
                 }
             }
         }
         scanner.close();
         competitionDAO.insertList(competitionMap.values());
-        releaseMatches.setLinesCompetitions(linesCount);
-        releaseMatches.setUpdatedCompetitions(true);
-        releaseMatchesDAO.update(releaseMatches);
+        release.setLinesCompetitions(linesCount);
+        release.setUpdatedCompetitions(true);
+        releaseDAO.update(release);
         logger.debug("last update competitions --> " + linesCount );
     }
 
     @Override
     public void updateMatches(String idRelease) throws Exception {
-        ReleaseMatches releaseMatches = releaseMatchesDAO.findById(idRelease);
-        Scanner scanner = getScanner(idRelease, BUCKET_MATCHES);
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
         Map<String, Match> matchMap = new HashMap<>();
         Integer linesCount = 1;
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            if (releaseMatches.getLinesMatches()<=linesCount) {
+            if (release.getLinesMatches()<=linesCount) {
                 MatchLineEntity matchLineEntity = new MatchLineEntity(line);
                 Match match = new Match();
                 //find competition
@@ -320,9 +235,9 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 match.setIdPlace(matchLineEntity.getField10_codCampo());
                 match.setScoreLocal(matchLineEntity.getField08_scoreLocal());
                 match.setScoreVisitor(matchLineEntity.getField09_scoreVisitor());
-                match.setDate(DeportesMadridUtils.formatMatchDate(dateStr));
-                match.setWeekNum(matchLineEntity.getField04_weekNum());
-                match.setMatchNum(matchLineEntity.getField05_matchNum());
+                match.setDate(DeportesMadridUtils.stringToDate(dateStr));
+                match.setNumWeek(matchLineEntity.getField04_weekNum());
+                match.setNumMatch(matchLineEntity.getField05_matchNum());
                 match.setScheduled(matchLineEntity.getField13_programado()==1);
                 match.setState(DeportesMadridConstants.MATCH_STATE.PENDIENTE.getValue());
                 if (StringUtils.isNotEmpty(matchLineEntity.getField14_estado())) {
@@ -339,24 +254,24 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 }
                 if (linesCount % LINES_BLOCK_SIZE == 0) {
                     logger.debug("updatematches lines --> " + linesCount );
-                    releaseMatches.setLinesMatches(linesCount);
-                    releaseMatchesDAO.update(releaseMatches);
+                    release.setLinesMatches(linesCount);
+                    releaseDAO.update(release);
                 }
             }
         }
         scanner.close();
         matchDAO.insertList(matchMap.values());
-        releaseMatches.setLinesMatches(linesCount);
-        releaseMatches.setUpdatedMatches(true);
-        releaseMatchesDAO.update(releaseMatches);
+        release.setLinesMatches(linesCount);
+        release.setUpdatedMatches(true);
+        releaseDAO.update(release);
         logger.debug("2. last update matches --> " + linesCount );
 
     }
 
     @Override
     public void updateClassifications(String idRelease) throws Exception {
-        ReleaseClassification releaseClassification = releaseClassificationDAO.findById(idRelease);
-        Scanner scanner = getScanner(idRelease, BUCKET_CLASSIFICATION);
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_CLASSIFICATION);
         scanner.nextLine();
         int linesCount = 1;
         Map<String, ClassificationEntry> classificationEntryMap = new HashMap<>();
@@ -390,8 +305,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 }
                 if (linesCount%LINES_BLOCK_SIZE==0) {
                     logger.debug("4 updateclassifications --> " + linesCount );
-                    releaseClassification.setLinesClassification(linesCount);
-                    releaseClassificationDAO.update(releaseClassification);
+                    release.setLinesClassification(linesCount);
+                    releaseDAO.update(release);
                 }
                 if (classificationEntryMap.size()>0 && classificationEntryMap.size()%INSERT_BLOCK_SIZE==0) {
                     classificationDAO.insertList(classificationEntryMap.values());
@@ -404,36 +319,45 @@ public class ReleaseManagerImpl implements ReleaseManager {
         scanner.close();
         classificationDAO.insertList(classificationEntryMap.values());
         logger.debug("last update classifications --> " + linesCount );
-        releaseClassification.setLinesClassification(linesCount);
-        releaseClassification.setUpdatedClassification(true);
-        releaseClassificationDAO.update(releaseClassification);
+        release.setLinesClassification(linesCount);
+        release.setUpdatedClassification(true);
+        releaseDAO.update(release);
     }
+
 
     @Override
     public void updateDataStore() throws Exception {
-        ReleaseMatches releaseMatches = createOrGetLastReleasePublishedMatches();
-        if (!releaseMatches.getUpdatedBucket()) {
-            loadBucketMatches(releaseMatches.getId());
+        Release release = queryLastRelease();
+        release.setTaskStart(new Date());
+        releaseDAO.update(release);
+        if (!release.getUpdatedTeams()) {
+            updateTeams(release.getId());
         }
-        if (!releaseMatches.getUpdatedTeams()) {
-            updateTeams(releaseMatches.getId());
+        if (!release.getUpdatedPlaces()) {
+            updatePlaces(release.getId());
         }
-        if (!releaseMatches.getUpdatedPlaces()) {
-            updatePlaces(releaseMatches.getId());
+        if (!release.getUpdatedCompetitions()) {
+            updateCompetitions(release.getId());
         }
-        if (!releaseMatches.getUpdatedCompetitions()) {
-            updateCompetitions(releaseMatches.getId());
+        if (!release.getUpdatedMatches()) {
+            updateMatches(release.getId());
         }
-        if (!releaseMatches.getUpdatedMatches()) {
-            updateMatches(releaseMatches.getId());
+        if (!release.getUpdatedClassification()) {
+            updateClassifications(release.getId());
         }
-        ReleaseClassification releaseClassification = createOrGetLastReleasePublishedClassification();
-        if (!releaseClassification.getUpdatedBucket()) {
-            loadBucketClassification(releaseClassification.getId());
-        }
-        if (!releaseClassification.getUpdatedClassification()) {
-            updateClassifications(releaseClassification.getId());
-        }
+        release.setTaskEnd(new Date());
+        releaseDAO.update(release);
+
+    }
+
+
+    public static final String calculateMd5FromBucket(String bucket, String releaseId) throws IOException {
+        GcsFilename gcsFilename = new GcsFilename(bucket, releaseId + ".csv");
+        GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(gcsFilename, 0, BUFFER_SIZE);
+        InputStream inputStream = Channels.newInputStream(readChannel);
+        String md5Hex = DigestUtils.md5Hex(inputStream);
+        readChannel.close();
+        return md5Hex;
     }
 
     private Scanner getScanner(String releaseId, String bucket) {
@@ -453,7 +377,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
         urlConnection.setConnectTimeout(30000);
         urlConnection.setReadTimeout(30000);
         int contentLength = urlConnection.getContentLength();
-        logger.debug(bucketName + " contentLength: " + contentLength);
+        //logger.debug(bucketName + " contentLength: " + contentLength);
         InputStream inputStream = urlConnection.getInputStream();
         copy(inputStream, Channels.newOutputStream(outputChannel));
     }
@@ -496,6 +420,63 @@ public class ReleaseManagerImpl implements ReleaseManager {
             }
         }
         return null;
+    }
+
+    @Override
+    public void createRelease() throws Exception {
+        Release release = new Release();
+        String dateStr = DeportesMadridUtils.dateToString(new Date());
+        release.setId(dateStr);
+        release.setPublishUrlMatches(DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_MATCHES));
+        release.setPublishUrlClassifications(DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_CLASSIFICATION));
+        release.setDateStrMatches(DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_MATCHES));
+        release.setDateStrClassification(DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_CLASSIFICATION));
+        copyObjectInBucket(DeportesMadridConstants.URL_MATCHES, DeportesMadridConstants.BUCKET_MATCHES, dateStr + ".csv");
+        copyObjectInBucket(DeportesMadridConstants.URL_CLASSIFICATION, DeportesMadridConstants.BUCKET_CLASSIFICATION, dateStr + ".csv");
+        release.setMd5Matches(calculateMd5FromBucket(DeportesMadridConstants.BUCKET_MATCHES, dateStr));
+        release.setMd5Classifications(calculateMd5FromBucket(DeportesMadridConstants.BUCKET_CLASSIFICATION, dateStr));
+        release.setUpdatedTeams(false);
+        release.setUpdatedPlaces(false);
+        release.setUpdatedMatches(false);
+        release.setUpdatedCompetitions(false);
+        release.setUpdatedClassification(false);
+        release.setLinesFileMatches(countLines(dateStr, DeportesMadridConstants.BUCKET_MATCHES));
+        release.setLinesFileClassifications(countLines(dateStr, DeportesMadridConstants.BUCKET_CLASSIFICATION));
+        release.setLinesTeams(0);
+        release.setLinesPlaces(0);
+        release.setLinesCompetitions(0);
+        release.setLinesMatches(0);
+        release.setLinesClassification(0);
+        releaseDAO.create(release);
+    }
+
+    @Override
+    public boolean publishedUpdates(Release release) throws IOException {
+        String md5Classification = calculateMd5FromUrl(DeportesMadridConstants.URL_CLASSIFICATION);
+        if (!md5Classification.equals(release.getMd5Classifications())) {
+            return true;
+        } else {
+            String md5Matches = calculateMd5FromUrl(DeportesMadridConstants.URL_MATCHES);
+            if (!md5Matches.equals(release.getMd5Matches())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String calculateMd5FromUrl(String urlStr) throws IOException {
+        URL url = new URL(urlStr);
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.setConnectTimeout(30000);
+        urlConnection.setReadTimeout(30000);
+        InputStream inputStream = urlConnection.getInputStream();
+        String md5Hex = DigestUtils.md5Hex(inputStream);
+        return md5Hex;
+    }
+
+    @Override
+    public void removeRelease(String id) throws Exception {
+        releaseDAO.remove(id);
     }
 
 /*    private Team addOrUpdateTeam(Long idTeam, String nameTeam) throws Exception {

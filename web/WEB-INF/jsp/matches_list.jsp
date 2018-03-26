@@ -157,10 +157,10 @@
                     }
 
                     let divRow = $('<div/>', {class: 'row'});
-                    divRow.append($('<div/>', {class:'col-sm-1', html: match.weekNum}));
-                    divRow.append($('<div/>', {class:'col-sm-1', html: match.matchNum}));
+                    divRow.append($('<div/>', {class:'col-sm-1', html: match.numWeek}));
+                    divRow.append($('<div/>', {class:'col-sm-1', html: match.numMatch}));
                     divRow.append($('<div/>', {class:'col-sm-1', html: match.state}));
-                    divRow.append($('<div/>', {class:'col-sm-1', html: moment(new Date(match.date)).format('MM/DD/YYYY HH:mm')}));
+                    divRow.append($('<div/>', {class:'col-sm-1', html: moment(new Date(match.date)).format('DD/MM/YYYY HH:mm')}));
                     divRow.append($('<div/>', {class:'col-sm-2', html: match.teamLocal != null ? match.teamLocal.name : " - "}));
                     divRow.append($('<div/>', {class:'col-sm-2', html: match.teamVisitor != null ? match.teamVisitor.name : " - "}));
                     divRow.append($('<div/>', {class:'col-sm-1', html: match.scoreLocal}));

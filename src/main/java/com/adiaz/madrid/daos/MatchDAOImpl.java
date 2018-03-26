@@ -1,9 +1,7 @@
 package com.adiaz.madrid.daos;
 
-import com.adiaz.madrid.entities.Competition;
 import com.adiaz.madrid.entities.Match;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
 import org.springframework.stereotype.Repository;
@@ -73,8 +71,8 @@ public class MatchDAOImpl implements MatchDAO {
     public List<Match> findByCompeticion(String idCompeticion) {
         Query<Match> query = ofy().load().type(Match.class)
                 .filter("idCompetition", idCompeticion)
-                .order("weekNum")
-                .order("matchNum");
+                .order("numWeek")
+                .order("numMatch");
         return query.list();
     }
 }
