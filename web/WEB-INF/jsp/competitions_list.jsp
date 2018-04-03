@@ -31,9 +31,10 @@
             divRow.append($('<div/>', {class:'col-sm-1', text: "competición"}));
             divRow.append($('<div/>', {class:'col-sm-1', text: "fase"}));
             divRow.append($('<div/>', {class:'col-sm-1', text: "grupo"}));
-            divRow.append($('<div/>', {class:'col-sm-3', html: "nombre"}));
+            divRow.append($('<div/>', {class:'col-sm-2', html: "nombre"}));
             divRow.append($('<div/>', {class:'col-sm-2', html: "deporte"}));
             divRow.append($('<div/>', {class:'col-sm-2', html: "distrito"}));
+            divRow.append($('<div/>', {class:'col-sm-1', html: "categ."}));
             resultList.append($('<li>', {class: 'list-group-item', html:divRow}));
             data.forEach(element => {
                 let nombres = element.nombreTemporada;
@@ -46,9 +47,10 @@
                 divRow.append($('<div/>', {class:'col-sm-1', text: element.codCompeticion}));
                 divRow.append($('<div/>', {class:'col-sm-1', text: element.codFase}));
                 divRow.append($('<div/>', {class:'col-sm-1', text: element.codGrupo}));
-                divRow.append($('<div/>', {class:'col-sm-3', html: nombres}));
+                divRow.append($('<div/>', {class:'col-sm-2', html: nombres}));
                 divRow.append($('<div/>', {class:'col-sm-2', html: element.deporte}));
                 divRow.append($('<div/>', {class:'col-sm-2', html: element.distrito}));
+                divRow.append($('<div/>', {class:'col-sm-1', html: element.categoria==null ? "-" : element.categoria}));
                 resultList.append($('<li>', {class: 'list-group-item', html:divRow}));
             });
             switchLoading(false);

@@ -33,7 +33,7 @@ public class MatchLineEntity {
             field17_nombreFase = split[17].trim();
             field18_nombreGrupo = split[18].trim();
             field19_nombreDeporte = split[19].trim();
-
+            field20_nombreCategoria = split[20].trim();
             field22_equipoLocal = split[22].trim();
             field23_equipoVisitante = split[23].trim();
             field24_campo = split[24].trim();
@@ -74,6 +74,7 @@ public class MatchLineEntity {
     private String field17_nombreFase;
     private String field18_nombreGrupo;
     private String field19_nombreDeporte;
+    private String field20_nombreCategoria;
     private String field22_equipoLocal;
     private String field23_equipoVisitante;
     private String field24_campo;

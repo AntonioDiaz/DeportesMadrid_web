@@ -29,6 +29,7 @@ public class Competition {
 
     @Index
     private String deporte;
+    private String categoria;
 
     @Index
     private String distrito;

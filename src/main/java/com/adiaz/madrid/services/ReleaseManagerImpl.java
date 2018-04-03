@@ -181,6 +181,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 competition.setNombreFase(matchLineEntity.getField17_nombreFase());
                 competition.setNombreGrupo(matchLineEntity.getField18_nombreGrupo());
                 competition.setDeporte(matchLineEntity.getField19_nombreDeporte());
+                competition.setCategoria(matchLineEntity.getField20_nombreCategoria());
                 competition.setDistrito(matchLineEntity.getField26_distrito());
                 Competition competitionOriginal = competitionDAO.findById(idCompetition);
                 if (competitionOriginal==null || !competitionOriginal.equals(competition)) {
