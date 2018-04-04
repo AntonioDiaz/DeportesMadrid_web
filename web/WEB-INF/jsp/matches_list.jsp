@@ -74,7 +74,7 @@
             idCompeticion += "|" + $("#fase").val();
             idCompeticion += "|" + $("#grupo").val();
             var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("findClassification", params, function(classificationEntries) {
+            peticionJqueryAjax("/server/findClassification", params, function(classificationEntries) {
                 $("#results").show();
                 $("#results_count").text(classificationEntries.length);
                 $("#result_list").empty();
@@ -129,7 +129,7 @@
             idCompeticion += "|" + $("#fase").val();
             idCompeticion += "|" + $("#grupo").val();
             var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("findMatches", params, function(matchesFound) {
+            peticionJqueryAjax("/server/findMatches", params, function(matchesFound) {
                 $("#results").show();
                 $("#results_count").text(matchesFound.length);
                 $("#result_list").empty();

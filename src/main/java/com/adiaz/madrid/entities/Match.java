@@ -30,6 +30,7 @@ public class Match {
     private Long idPlace;
 
     @Ignore
+    @JsonIgnore
     private Competition competition;
 
     @Ignore

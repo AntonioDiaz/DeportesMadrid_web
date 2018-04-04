@@ -72,19 +72,4 @@ public class MatchesController {
                                     @RequestParam(value = "cod_fase") Integer codFase) {
         return competitionsManager.distinctGrupo(codTemporada, codCompeticion, codFase);
     }
-
-    @RequestMapping(value = "/findMatches", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Match> findMatches(@RequestParam(value = "cod_competicion") String codCompeticion) {
-        List<Match> matchesByCompetition = matchesManager.findMatchesByCompetition(codCompeticion);
-        return matchesByCompetition;
-    }
-
-
-    @RequestMapping(value = "/findClassification", method = RequestMethod.GET)
-    @ResponseBody
-    public List<ClassificationEntry> findClassification(@RequestParam(value = "cod_competicion") String codCompeticion) {
-        List<ClassificationEntry> classificationEntries = classificationManager.findClassificationByCompetition(codCompeticion);
-        return classificationEntries;
-    }
 }
