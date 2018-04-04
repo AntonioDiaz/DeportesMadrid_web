@@ -10,4 +10,8 @@
     <datastore-index kind="Release" ancestor="false" source="manual">
         <property name="__key__" direction="desc"/>
     </datastore-index>
+    <datastore-index kind="CLASSIFICATION_ENTITY" ancestor="false" source="manual">
+        <property name="idCompetition" direction="asc"/>
+        <property name="position" direction="asc"/>
+    </datastore-index>
 </datastore-indexes>

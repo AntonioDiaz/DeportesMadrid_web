@@ -10,35 +10,30 @@ public class ClassificationLineEntity {
     private static final Logger logger = Logger.getLogger(ClassificationLineEntity.class);
 
 
-    public ClassificationLineEntity(String line) {
-        try {
-            String[] split = line.split(";");
-            field00_codTemporada = Integer.parseInt(split[0].trim());
-            field01_codCompeticion = split[1].trim();
-            field02_codFase = Integer.parseInt(split[2].trim());
-            field03_codGrupo = Integer.parseInt(split[3].trim());
-            field04_codEquipo = Long.parseLong(split[4].trim());
-            field05_posicion = Integer.parseInt(split[5].trim());
-            field06_puntos = Integer.parseInt(split[6].trim());
-            field07_partidosJugados = Integer.parseInt(split[7].trim());
-            field08_partidosGanados = Integer.parseInt(split[8].trim());
-            field09_partidosEmpatados = Integer.parseInt(split[9].trim());
-            field10_partidosPerdidos = Integer.parseInt(split[10].trim());
-            field11_golesFavor = Integer.parseInt(split[11].trim());
-            field12_golesContra = Integer.parseInt(split[12].trim());
-            field13_nombreTemporada = split[13].trim();
-            field14_nombreCompeticion = split[14].trim();
-            field15_nombreFase = split[15].trim();
-            field16_nombreGrupo = split[16].trim();
-            field17_nombreDeporte = split[17].trim();
-            field18_nombreCategoria = split[18].trim();
-            field19_nombreEquipo = split[19].trim();
-            field20_nombreSexo = split[20].trim();
-            field21_nombreDistrito = split[21].trim();
-        } catch (Exception e) {
-            String errorMsg = String.format("error reading line %s", line);
-            logger.error(errorMsg, e);
-        }
+    public ClassificationLineEntity(String line) throws Exception {
+        String[] split = line.split(";");
+        field00_codTemporada = Integer.parseInt(split[0].trim());
+        field01_codCompeticion = split[1].trim();
+        field02_codFase = Integer.parseInt(split[2].trim());
+        field03_codGrupo = Integer.parseInt(split[3].trim());
+        field04_codEquipo = Long.parseLong(split[4].trim());
+        field05_posicion = Integer.parseInt(split[5].trim());
+        field06_puntos = Integer.parseInt(split[6].trim());
+        field07_partidosJugados = Integer.parseInt(split[7].trim());
+        field08_partidosGanados = Integer.parseInt(split[8].trim());
+        field09_partidosEmpatados = Integer.parseInt(split[9].trim());
+        field10_partidosPerdidos = Integer.parseInt(split[10].trim());
+        field11_golesFavor = Integer.parseInt(split[11].trim());
+        field12_golesContra = Integer.parseInt(split[12].trim());
+        field13_nombreTemporada = split[13].trim();
+        field14_nombreCompeticion = split[14].trim();
+        field15_nombreFase = split[15].trim();
+        field16_nombreGrupo = split[16].trim();
+        field17_nombreDeporte = split[17].trim();
+        field18_nombreCategoria = split[18].trim();
+        field19_nombreEquipo = split[19].trim();
+        field20_nombreSexo = split[20].trim();
+        field21_nombreDistrito = split[21].trim();
     }
 
     private Integer field00_codTemporada;

@@ -88,10 +88,14 @@ public class ReleaseManagerImpl implements ReleaseManager {
             String line = scanner.nextLine();
             linesCount++;
             if (release.getLinesTeams()<=linesCount) {
-                MatchLineEntity lineEntity = new MatchLineEntity(line);
-                Team team = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
-                if (team != null) {
-                    teamsMap.put(team.getId(), team);
+                try {
+                    MatchLineEntity lineEntity = new MatchLineEntity(line);
+                    Team team = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
+                    if (team != null) {
+                        teamsMap.put(team.getId(), team);
+                    }
+                } catch (Exception e) {
+                    logger.error("updateTeams ->" + e.getMessage() + " in line:" + line);
                 }
                 if (teamsMap.size() > 0 && teamsMap.size() % INSERT_BLOCK_SIZE == 0) {
                     teamDAO.insertList(teamsMap.values());
@@ -122,18 +126,22 @@ public class ReleaseManagerImpl implements ReleaseManager {
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            MatchLineEntity matchLineEntity = new MatchLineEntity(line);
-            Place place = new Place();
-            Long id = matchLineEntity.getField10_codCampo();
-            if (id!=0) {
-                Place placeOriginal = placeDAO.findById(id);
-                place.setId(id);
-                place.setName(matchLineEntity.getField24_campo());
-                place.setCoordX(matchLineEntity.getField29_coordx());
-                place.setCoordY(matchLineEntity.getField30_coordy());
-                if (placeOriginal==null || !placeOriginal.equals(place)) {
-                    placesMap.put(place.getId(), place);
+            try {
+                MatchLineEntity matchLineEntity = new MatchLineEntity(line);
+                Place place = new Place();
+                Long id = matchLineEntity.getField10_codCampo();
+                if (id!=0) {
+                    Place placeOriginal = placeDAO.findById(id);
+                    place.setId(id);
+                    place.setName(matchLineEntity.getField24_campo());
+                    place.setCoordX(matchLineEntity.getField29_coordx());
+                    place.setCoordY(matchLineEntity.getField30_coordy());
+                    if (placeOriginal==null || !placeOriginal.equals(place)) {
+                        placesMap.put(place.getId(), place);
+                    }
                 }
+            } catch (Exception e) {
+                logger.error("updatePlaces ->" + e.getMessage() + " in line:" + line);
             }
             if (placesMap.size()>0 && placesMap.size() % INSERT_BLOCK_SIZE == 0) {
                 placeDAO.insertList(placesMap.values());
@@ -164,28 +172,32 @@ public class ReleaseManagerImpl implements ReleaseManager {
             linesCount++;
             String line = scanner.nextLine();
             if (release.getLinesCompetitions()<=linesCount) {
-                MatchLineEntity matchLineEntity = new MatchLineEntity(line);
-                Competition competition = new Competition();
-                Integer codTemporada = matchLineEntity.getField00_codTemporada();
-                String codCompeticion = matchLineEntity.getField01_codCompeticion();
-                Integer codFase = matchLineEntity.getField02_codFase();
-                Integer codGrupo = matchLineEntity.getField03_codGrupo();
-                String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
-                competition.setCodTemporada(codTemporada);
-                competition.setCodCompeticion( codCompeticion);
-                competition.setCodFase(codFase);
-                competition.setCodGrupo(codGrupo);
-                competition.setId(idCompetition);
-                competition.setNombreTemporada(matchLineEntity.getField15_nombreTemporada());
-                competition.setNombreCompeticion(matchLineEntity.getField16_nombreCompeticion());
-                competition.setNombreFase(matchLineEntity.getField17_nombreFase());
-                competition.setNombreGrupo(matchLineEntity.getField18_nombreGrupo());
-                competition.setDeporte(matchLineEntity.getField19_nombreDeporte());
-                competition.setCategoria(matchLineEntity.getField20_nombreCategoria());
-                competition.setDistrito(matchLineEntity.getField26_distrito());
-                Competition competitionOriginal = competitionDAO.findById(idCompetition);
-                if (competitionOriginal==null || !competitionOriginal.equals(competition)) {
-                    competitionMap.put(competition.getId(), competition);
+                try {
+                    MatchLineEntity matchLineEntity = new MatchLineEntity(line);
+                    Competition competition = new Competition();
+                    Integer codTemporada = matchLineEntity.getField00_codTemporada();
+                    String codCompeticion = matchLineEntity.getField01_codCompeticion();
+                    Integer codFase = matchLineEntity.getField02_codFase();
+                    Integer codGrupo = matchLineEntity.getField03_codGrupo();
+                    String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
+                    competition.setCodTemporada(codTemporada);
+                    competition.setCodCompeticion( codCompeticion);
+                    competition.setCodFase(codFase);
+                    competition.setCodGrupo(codGrupo);
+                    competition.setId(idCompetition);
+                    competition.setNombreTemporada(matchLineEntity.getField15_nombreTemporada());
+                    competition.setNombreCompeticion(matchLineEntity.getField16_nombreCompeticion());
+                    competition.setNombreFase(matchLineEntity.getField17_nombreFase());
+                    competition.setNombreGrupo(matchLineEntity.getField18_nombreGrupo());
+                    competition.setDeporte(matchLineEntity.getField19_nombreDeporte());
+                    competition.setCategoria(matchLineEntity.getField20_nombreCategoria());
+                    competition.setDistrito(matchLineEntity.getField26_distrito());
+                    Competition competitionOriginal = competitionDAO.findById(idCompetition);
+                    if (competitionOriginal==null || !competitionOriginal.equals(competition)) {
+                        competitionMap.put(competition.getId(), competition);
+                    }
+                } catch (Exception e) {
+                    logger.error("updateCompetitions ->" + e.getMessage() + " in line:" + line);
                 }
                 if (competitionMap.size()>0 && competitionMap.size() % INSERT_BLOCK_SIZE == 0) {
                     competitionDAO.insertList(competitionMap.values());
@@ -217,36 +229,40 @@ public class ReleaseManagerImpl implements ReleaseManager {
             linesCount++;
             String line = scanner.nextLine();
             if (release.getLinesMatches()<=linesCount) {
-                MatchLineEntity matchLineEntity = new MatchLineEntity(line);
-                Match match = new Match();
-                //find competition
-                Integer codTemporada = matchLineEntity.getField00_codTemporada();
-                String codCompeticion = matchLineEntity.getField01_codCompeticion();
-                Integer codFase = matchLineEntity.getField02_codFase();
-                Integer codGrupo = matchLineEntity.getField03_codGrupo();
-                Integer weekNumber = matchLineEntity.getField04_weekNum();
-                Integer matchNumber = matchLineEntity.getField05_matchNum();
-                String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
-                String idMatch = DeportesMadridUtils.generateIdMatch(codTemporada, codCompeticion, codFase, codGrupo, weekNumber, matchNumber);
-                String dateStr = matchLineEntity.getField11_fecha() + " " + matchLineEntity.getField12_hora();
-                match.setId(idMatch);
-                match.setIdCompetition(idCompetition);
-                match.setIdTeamLocal(matchLineEntity.getField06_codEquipoLocal());
-                match.setIdTeamVisitor(matchLineEntity.getField07_codEquipoVisitante());
-                match.setIdPlace(matchLineEntity.getField10_codCampo());
-                match.setScoreLocal(matchLineEntity.getField08_scoreLocal());
-                match.setScoreVisitor(matchLineEntity.getField09_scoreVisitor());
-                match.setDate(DeportesMadridUtils.stringToDate(dateStr));
-                match.setNumWeek(matchLineEntity.getField04_weekNum());
-                match.setNumMatch(matchLineEntity.getField05_matchNum());
-                match.setScheduled(matchLineEntity.getField13_programado()==1);
-                match.setState(DeportesMadridConstants.MATCH_STATE.PENDIENTE.getValue());
-                if (StringUtils.isNotEmpty(matchLineEntity.getField14_estado())) {
-                    match.setState(DeportesMadridConstants.MATCH_STATE.createState(matchLineEntity.getField14_estado().charAt(0)).getValue());
-                }
-                Match matchOriginal = matchDAO.findById(idMatch);
-                if (matchOriginal==null || !matchOriginal.equals(match)) {
-                    matchMap.put(match.getId(), match);
+                try {
+                    MatchLineEntity matchLineEntity = new MatchLineEntity(line);
+                    Match match = new Match();
+                    //find competition
+                    Integer codTemporada = matchLineEntity.getField00_codTemporada();
+                    String codCompeticion = matchLineEntity.getField01_codCompeticion();
+                    Integer codFase = matchLineEntity.getField02_codFase();
+                    Integer codGrupo = matchLineEntity.getField03_codGrupo();
+                    Integer weekNumber = matchLineEntity.getField04_weekNum();
+                    Integer matchNumber = matchLineEntity.getField05_matchNum();
+                    String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
+                    String idMatch = DeportesMadridUtils.generateIdMatch(codTemporada, codCompeticion, codFase, codGrupo, weekNumber, matchNumber);
+                    String dateStr = matchLineEntity.getField11_fecha() + " " + matchLineEntity.getField12_hora();
+                    match.setId(idMatch);
+                    match.setIdCompetition(idCompetition);
+                    match.setIdTeamLocal(matchLineEntity.getField06_codEquipoLocal());
+                    match.setIdTeamVisitor(matchLineEntity.getField07_codEquipoVisitante());
+                    match.setIdPlace(matchLineEntity.getField10_codCampo());
+                    match.setScoreLocal(matchLineEntity.getField08_scoreLocal());
+                    match.setScoreVisitor(matchLineEntity.getField09_scoreVisitor());
+                    match.setDate(DeportesMadridUtils.stringToDate(dateStr));
+                    match.setNumWeek(matchLineEntity.getField04_weekNum());
+                    match.setNumMatch(matchLineEntity.getField05_matchNum());
+                    match.setScheduled(matchLineEntity.getField13_programado()==1);
+                    match.setState(DeportesMadridConstants.MATCH_STATE.PENDIENTE.getValue());
+                    if (StringUtils.isNotEmpty(matchLineEntity.getField14_estado())) {
+                        match.setState(DeportesMadridConstants.MATCH_STATE.createState(matchLineEntity.getField14_estado().charAt(0)).getValue());
+                    }
+                    Match matchOriginal = matchDAO.findById(idMatch);
+                    if (matchOriginal==null || !matchOriginal.equals(match)) {
+                        matchMap.put(match.getId(), match);
+                    }
+                } catch (Exception e) {
+                    logger.error("updateMatches ->" + e.getMessage() + " in line:" + line);
                 }
                 if (matchMap.size()>0 && matchMap.size() % INSERT_BLOCK_SIZE == 0) {
                     logger.debug("1. updateamatches insert size -->" + matchMap.size());
@@ -279,8 +295,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            ClassificationLineEntity classificationLineEntity = new ClassificationLineEntity(line);
             try {
+                ClassificationLineEntity classificationLineEntity = new ClassificationLineEntity(line);
                 Integer codTemporada = classificationLineEntity.getField00_codTemporada();
                 String codCompeticion = classificationLineEntity.getField01_codCompeticion();
                 Integer codFase = classificationLineEntity.getField02_codFase();
@@ -304,17 +320,17 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 if (classificationEntryOriginal==null || !classificationEntry.equals(classificationEntryOriginal)) {
                     classificationEntryMap.put(idClassificationEntry, classificationEntry);
                 }
-                if (linesCount%LINES_BLOCK_SIZE==0) {
-                    logger.debug("4 updateclassifications --> " + linesCount );
-                    release.setLinesClassification(linesCount);
-                    releaseDAO.update(release);
-                }
-                if (classificationEntryMap.size()>0 && classificationEntryMap.size()%INSERT_BLOCK_SIZE==0) {
-                    classificationDAO.insertList(classificationEntryMap.values());
-                    classificationEntryMap = new HashMap<>();
-                }
             } catch (Exception e) {
-                logger.error("error when generating classificationLineEntity " + classificationLineEntity, e);
+                logger.error("updateClassifications ->" + e.getMessage() + " in line:" + line);
+            }
+            if (linesCount%LINES_BLOCK_SIZE==0) {
+                logger.debug("4 updateclassifications --> " + linesCount );
+                release.setLinesClassification(linesCount);
+                releaseDAO.update(release);
+            }
+            if (classificationEntryMap.size()>0 && classificationEntryMap.size()%INSERT_BLOCK_SIZE==0) {
+                classificationDAO.insertList(classificationEntryMap.values());
+                classificationEntryMap = new HashMap<>();
             }
         }
         scanner.close();
