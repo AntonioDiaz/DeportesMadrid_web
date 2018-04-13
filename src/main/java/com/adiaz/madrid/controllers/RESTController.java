@@ -6,6 +6,7 @@ import com.adiaz.madrid.entities.Match;
 import com.adiaz.madrid.services.ClassificationManager;
 import com.adiaz.madrid.services.CompetitionsManager;
 import com.adiaz.madrid.services.MatchesManager;
+import com.adiaz.madrid.utils.CompetitionFull;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -62,5 +63,20 @@ public class RESTController {
         List<ClassificationEntry> classificationEntries = classificationManager.findClassificationByCompetition(codCompeticion);
         return classificationEntries;
     }
+
+
+    @RequestMapping(value = "/findCompetition", method = RequestMethod.GET)
+    @ResponseBody
+    public CompetitionFull findMatchesAndCompetition(@RequestParam(value = "cod_competicion") String codCompeticion) {
+        Competition competition = competitionsManager.findById(codCompeticion);
+        List<Match> matchesByCompetition = matchesManager.findMatchesByCompetition(codCompeticion);
+        List<ClassificationEntry> classificationEntries = classificationManager.findClassificationByCompetition(codCompeticion);
+        CompetitionFull competitionFull = new CompetitionFull();
+        competitionFull.setCompetition(competition);
+        competitionFull.setMatches(matchesByCompetition);
+        competitionFull.setClassification(classificationEntries);
+        return competitionFull;
+    }
+
 
 }

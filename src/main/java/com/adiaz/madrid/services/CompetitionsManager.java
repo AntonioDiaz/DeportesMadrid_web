@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface CompetitionsManager {
 
+
     Integer competitionsCount();
     List<Competition> findAllCompetitions();
     List<Competition> findCompetitions(String groupName);
-
+    Competition findById(String id);
     List<Integer> distinctTemporadas();
     List<Competition> distinctCompeticion(Integer temporada);
     List<Competition> distinctFase(Integer temporada, String competicion);

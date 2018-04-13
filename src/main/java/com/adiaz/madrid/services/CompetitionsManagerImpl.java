@@ -37,6 +37,11 @@ public class CompetitionsManagerImpl implements CompetitionsManager {
     }
 
     @Override
+    public Competition findById(String id) {
+        return competitionDAO.findById(id);
+    }
+
+    @Override
     public List<Integer> distinctTemporadas() {
         List<Integer> temporadasList = new ArrayList<>();
         List<Competition> competitionList = competitionDAO.distinctTemporadas();

@@ -74,19 +74,19 @@
             idCompeticion += "|" + $("#fase").val();
             idCompeticion += "|" + $("#grupo").val();
             var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("/server/findClassification", params, function(classificationEntries) {
+            peticionJqueryAjax("/server/findCompetition", params, function(competitionFull) {
                 $("#results").show();
-                $("#results_count").text(classificationEntries.length);
+                $("#results_count").text(competitionFull.classification.length);
                 $("#result_list").empty();
                 let resultList = $("#result_list").append("<ul class=\"list-group\">");
-                classificationEntries.forEach((entry, index) => {
+                competitionFull.classification.forEach((entry, index) => {
                     if (index==0) {
-                        let competicion = "<br>temporada: " + entry.competition.nombreTemporada;
-                        competicion += " <br>competición: " + entry.competition.nombreCompeticion;
-                        competicion += " <br>fase: " + entry.competition.nombreFase;
-                        competicion += " <br>grupo: " + entry.competition.nombreGrupo;
-                        competicion += " <br>deporte: " + entry.competition.deporte;
-                        competicion += " <br>distrito: " + entry.competition.distrito;
+                        let competicion = "<br>temporada: " + competitionFull.competition.nombreTemporada;
+                        competicion += " <br>competición: " + competitionFull.competition.nombreCompeticion;
+                        competicion += " <br>fase: " + competitionFull.competition.nombreFase;
+                        competicion += " <br>grupo: " + competitionFull.competition.nombreGrupo;
+                        competicion += " <br>deporte: " + competitionFull.competition.deporte;
+                        competicion += " <br>distrito: " + competitionFull.competition.distrito;
                         $("#results_count").append(competicion);
                         let divRow = $('<div/>', {class: 'row'});
                         divRow.append($('<div/>', {class:'col-sm-1', html: "posición"}));
@@ -129,19 +129,19 @@
             idCompeticion += "|" + $("#fase").val();
             idCompeticion += "|" + $("#grupo").val();
             var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("/server/findMatches", params, function(matchesFound) {
+            peticionJqueryAjax("/server/findCompetition", params, function(competitionFull) {
                 $("#results").show();
-                $("#results_count").text(matchesFound.length);
+                $("#results_count").text(competitionFull.matches.length);
                 $("#result_list").empty();
                 let resultList = $("#result_list").append("<ul class=\"list-group\">");
-                matchesFound.forEach((match, index) => {
+                competitionFull.matches.forEach((match, index) => {
                     if (index==0) {
-                        let competicion = "<br>temporada: " + match.competition.nombreTemporada;
-                        competicion += " <br>competición: " + match.competition.nombreCompeticion;
-                        competicion += " <br>fase: " + match.competition.nombreFase;
-                        competicion += " <br>grupo: " + match.competition.nombreGrupo;
-                        competicion += " <br>deporte: " + match.competition.deporte;
-                        competicion += " <br>distrito: " + match.competition.distrito;
+                        let competicion = "<br>temporada: " + competitionFull.competition.nombreTemporada;
+                        competicion += " <br>competición: " + competitionFull.competition.nombreCompeticion;
+                        competicion += " <br>fase: " + competitionFull.competition.nombreFase;
+                        competicion += " <br>grupo: " + competitionFull.competition.nombreGrupo;
+                        competicion += " <br>deporte: " + competitionFull.competition.deporte;
+                        competicion += " <br>distrito: " + competitionFull.competition.distrito;
                         $("#results_count").append(competicion);
                         let divRow = $('<div/>', {class: 'row'});
                         divRow.append($('<div/>', {class:'col-sm-1', html: "jornada"}));
