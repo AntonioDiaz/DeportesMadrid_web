@@ -117,6 +117,10 @@
         }
     }
 
+    function fOpenMatchDetails(matchTxt) {
+        showDialogLargeText(matchTxt);
+    }
+
     function fFindMatches() {
         if ($("#temporada").prop('selectedIndex')==0
                 || $("#competicion").prop('selectedIndex')==0
@@ -150,12 +154,17 @@
                         divRow.append($('<div/>', {class:'col-sm-1', html: "fecha"}));
                         divRow.append($('<div/>', {class:'col-sm-2', html: "local"}));
                         divRow.append($('<div/>', {class:'col-sm-2', html: "visitante"}));
-                        divRow.append($('<div/>', {class:'col-sm-1', html: "marc. loc."}));
-                        divRow.append($('<div/>', {class:'col-sm-1', html: "marc. vis."}));
-                        divRow.append($('<div/>', {class:'col-sm-1', html: "campo"}));
+                        divRow.append($('<div/>', {class:'col-sm-1', html: "marcador"}));
+                        divRow.append($('<div/>', {class:'col-sm-2', html: "campo"}));
+                        divRow.append($('<div/>', {class:'col-sm-1', html: "&nbsp;"}));
                         resultList.append($('<li>', {class: 'list-group-item', html:divRow}));
                     }
+                    //console.log("match " +  match)
+                    var linkDetails = $('<a>', {
+                        href: "javascript:fOpenMatchDetails('"+ JSON.stringify(match) +"');",
+                        text: "details"
 
+                    });
                     let divRow = $('<div/>', {class: 'row'});
                     divRow.append($('<div/>', {class:'col-sm-1', html: match.numWeek}));
                     divRow.append($('<div/>', {class:'col-sm-1', html: match.numMatch}));
@@ -163,9 +172,10 @@
                     divRow.append($('<div/>', {class:'col-sm-1', html: moment(new Date(match.date)).format('DD/MM/YYYY HH:mm')}));
                     divRow.append($('<div/>', {class:'col-sm-2', html: match.teamLocal != null ? match.teamLocal.name : " - "}));
                     divRow.append($('<div/>', {class:'col-sm-2', html: match.teamVisitor != null ? match.teamVisitor.name : " - "}));
-                    divRow.append($('<div/>', {class:'col-sm-1', html: match.scoreLocal}));
-                    divRow.append($('<div/>', {class:'col-sm-1', html: match.scoreVisitor}));
-                    divRow.append($('<div/>', {class:'col-sm-1', html: match.place!=null ? match.place.name : " - "}));
+                    divRow.append($('<div/>', {class:'col-sm-1', html: match.scoreLocal + " - " + match.scoreVisitor}));
+                    divRow.append($('<div/>', {class:'col-sm-2', html: match.place!=null ? match.place.name : " - "}));
+                    divRow.append($('<div/>', {class:'col-sm-1', html: linkDetails}));
+
                     resultList.append($('<li>', {class: 'list-group-item', html:divRow}));
                 });
                 switchLoading(false);

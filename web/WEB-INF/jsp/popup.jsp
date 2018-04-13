@@ -1,6 +1,15 @@
 <!-- Modal -->
 <script type="text/javascript">
 
+    function showDialogLargeText(bodyText, functonAccept) {
+        $('#modalContentLargeText').html(bodyText);
+        $('#myModalAlert').modal('show');
+        $("#buttons_alert").show();
+        $("#buttons_alert").click(functonAccept);
+        $("#buttons_confirm").hide();
+    }
+
+
     function showDialogAlert(bodyText) {
         showDialogAlert(bodyText, null);
     }
@@ -33,6 +42,8 @@
             </div>
             <div class="modal-body">
                 <div id="modalContent"></div>
+                <div id="modalContentLargeText" style="font-size: 10px; word-break: break-all"></div>
+
             </div>
             <div class="modal-footer">
                 <div id="buttons_alert">
