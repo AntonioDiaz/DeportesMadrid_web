@@ -17,7 +17,8 @@ public class DeportesMadridConstants {
         SUSPENDIDO(4, "Suspendido"),
         NO_PRESENTADO(5, "No presentado"),
         APLAZADO(6, "Aplazado"),
-        DESCONOCIDO(7, "Desconocido");
+        DESCONOCIDO(7, "Desconocido"),
+        DESCANSA(8, "Descansa");
 
         private int value;
         private String stateDesc;

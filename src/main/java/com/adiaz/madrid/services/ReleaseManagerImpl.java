@@ -253,10 +253,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     match.setNumWeek(matchLineEntity.getField04_weekNum());
                     match.setNumMatch(matchLineEntity.getField05_matchNum());
                     match.setScheduled(matchLineEntity.getField13_programado()==1);
-                    match.setState(DeportesMadridConstants.MATCH_STATE.PENDIENTE.getValue());
-                    if (StringUtils.isNotEmpty(matchLineEntity.getField14_estado())) {
-                        match.setState(DeportesMadridConstants.MATCH_STATE.createState(matchLineEntity.getField14_estado().charAt(0)).getValue());
-                    }
+                    match.setState(calculateState(matchLineEntity));
                     Match matchOriginal = matchDAO.findById(idMatch);
                     if (matchOriginal==null || !matchOriginal.equals(match)) {
                         matchMap.put(match.getId(), match);
@@ -283,6 +280,19 @@ public class ReleaseManagerImpl implements ReleaseManager {
         releaseDAO.update(release);
         logger.debug("2. last update matches --> " + linesCount );
 
+    }
+
+    private Integer calculateState(MatchLineEntity matchLineEntity) {
+        Integer state = DeportesMadridConstants.MATCH_STATE.PENDIENTE.getValue();
+        if ((matchLineEntity.getField06_codEquipoLocal()==0 && matchLineEntity.getField07_codEquipoVisitante()!=0)
+                || (matchLineEntity.getField06_codEquipoLocal()!=0 && matchLineEntity.getField07_codEquipoVisitante()==0)) {
+            state = DeportesMadridConstants.MATCH_STATE.DESCANSA.getValue();
+        } else {
+            if (StringUtils.isNotEmpty(matchLineEntity.getField14_estado())) {
+                state = DeportesMadridConstants.MATCH_STATE.createState(matchLineEntity.getField14_estado().charAt(0)).getValue();
+            }
+        }
+        return state;
     }
 
     @Override
