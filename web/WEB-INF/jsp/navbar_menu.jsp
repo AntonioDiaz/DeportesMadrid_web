@@ -14,6 +14,7 @@
                     <li><a href="/teams/list">Equipos</a></li>
                     <li><a href="/places/list">Campos</a></li>
                     <li><a href="/competitions/list">Competiciones</a></li>
+                    <li><a href="/competitions/sports_list">Deportes</a></li>
                     <li><a href="/matches/list">Partidos</a></li>
                 </ul>
             </li>

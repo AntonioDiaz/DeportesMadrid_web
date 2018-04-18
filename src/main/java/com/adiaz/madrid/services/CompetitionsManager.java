@@ -1,6 +1,7 @@
 package com.adiaz.madrid.services;
 
 import com.adiaz.madrid.entities.Competition;
+import com.adiaz.madrid.utils.entities.SportsCountEntity;
 
 import java.util.List;
 
@@ -17,5 +18,6 @@ public interface CompetitionsManager {
     List<Competition> distinctGrupo(Integer temporada, String competicion, Integer fase);
     List<String> distinctSports();
     List<String> distinctDistritos(String sport);
+    List<SportsCountEntity> distinctSportsCount();
 
 }

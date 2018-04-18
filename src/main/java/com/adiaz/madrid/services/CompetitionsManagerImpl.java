@@ -3,6 +3,7 @@ package com.adiaz.madrid.services;
 
 import com.adiaz.madrid.daos.CompetitionDAO;
 import com.adiaz.madrid.entities.Competition;
+import com.adiaz.madrid.utils.entities.SportsCountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,5 +84,15 @@ public class CompetitionsManagerImpl implements CompetitionsManager {
             distritosList.add(competition.getDistrito());
         }
         return distritosList;
+    }
+
+    @Override
+    public List<SportsCountEntity> distinctSportsCount() {
+        List<SportsCountEntity> sportsCountEntityList = new ArrayList<>();
+        for (String s : distinctSports()) {
+            List<Competition> bySport = competitionDAO.findBySport(s);
+            sportsCountEntityList.add(new SportsCountEntity (s, bySport.size()));
+        }
+        return sportsCountEntityList;
     }
 }

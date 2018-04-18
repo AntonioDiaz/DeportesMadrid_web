@@ -70,6 +70,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/competitions_list.jsp"/>
     </definition>
 
+    <definition name="competitions_sports_list" extends="homeTemplate">
+        <put-attribute name="page_title" value="Lista de deportes"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/competitions_sports_list.jsp"/>
+    </definition>
+
     <definition name="matches_list" extends="homeTemplate">
         <put-attribute name="page_title" value="Lista de partidos"/>
         <put-attribute name="body" value="/WEB-INF/jsp/matches_list.jsp"/>

@@ -1,7 +1,6 @@
-package com.adiaz.madrid.utils;
+package com.adiaz.madrid.utils.entities;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 @Data

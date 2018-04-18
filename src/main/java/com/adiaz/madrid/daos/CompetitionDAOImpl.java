@@ -104,4 +104,9 @@ public class CompetitionDAOImpl implements CompetitionDAO {
                 .list();
         return competitionList;
     }
+
+    @Override
+    public List<Competition> findBySport(String sport) {
+        return ofy().load().type(Competition.class).filter("deporte", sport).list();
+    }
 }

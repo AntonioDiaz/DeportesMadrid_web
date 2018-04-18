@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface CompetitionDAO extends GenericDAO<Competition, String> {
 
-
     void insertList(Collection<Competition> competitions) throws Exception;
 
     List<Competition> distinctTemporadas();
@@ -21,4 +20,6 @@ public interface CompetitionDAO extends GenericDAO<Competition, String> {
     List<Competition> distinctSports();
 
     List<Competition> distinctDistritos(String sport);
+
+    List<Competition> findBySport(String sport);
 }

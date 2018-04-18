@@ -30,6 +30,13 @@ public class CompetitionsController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/sports_list", method = RequestMethod.GET)
+    public ModelAndView sportsList(){
+        ModelAndView modelAndView = new ModelAndView("competitions_sports_list");
+        modelAndView.addObject("sports_list_count", competitionsManager.distinctSportsCount());
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
     public List<Competition> search(@RequestParam(value = "competition_name") String competitionName) {

@@ -2,10 +2,10 @@ package com.adiaz.madrid.services;
 
 import com.adiaz.madrid.daos.*;
 import com.adiaz.madrid.entities.*;
-import com.adiaz.madrid.utils.ClassificationLineEntity;
+import com.adiaz.madrid.utils.entities.ClassificationLineEntity;
 import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.adiaz.madrid.utils.DeportesMadridUtils;
-import com.adiaz.madrid.utils.MatchLineEntity;
+import com.adiaz.madrid.utils.entities.MatchLineEntity;
 import com.google.appengine.tools.cloudstorage.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -95,7 +95,10 @@ public class ReleaseManagerImpl implements ReleaseManager {
                         teamsMap.put(team.getId(), team);
                     }
                 } catch (Exception e) {
+                    release.setLinesTeamsErrors(release.getLinesTeamsErrors() + 1);
+                    releaseDAO.update(release);
                     logger.error("updateTeams ->" + e.getMessage() + " in line:" + line);
+
                 }
                 if (teamsMap.size() > 0 && teamsMap.size() % INSERT_BLOCK_SIZE == 0) {
                     teamDAO.insertList(teamsMap.values());
@@ -141,6 +144,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     }
                 }
             } catch (Exception e) {
+                release.setLinesPlacesErrors(release.getLinesPlacesErrors() + 1);
+                releaseDAO.update(release);
                 logger.error("updatePlaces ->" + e.getMessage() + " in line:" + line);
             }
             if (placesMap.size()>0 && placesMap.size() % INSERT_BLOCK_SIZE == 0) {
@@ -197,6 +202,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                         competitionMap.put(competition.getId(), competition);
                     }
                 } catch (Exception e) {
+                    release.setLinesCompetitionsErrors(release.getLinesCompetitionsErrors() + 1);
+                    releaseDAO.update(release);
                     logger.error("updateCompetitions ->" + e.getMessage() + " in line:" + line);
                 }
                 if (competitionMap.size()>0 && competitionMap.size() % INSERT_BLOCK_SIZE == 0) {
@@ -259,6 +266,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                         matchMap.put(match.getId(), match);
                     }
                 } catch (Exception e) {
+                    release.setLinesMatchesErrors(release.getLinesMatchesErrors() + 1);
+                    releaseDAO.update(release);
                     logger.error("updateMatches ->" + e.getMessage() + " in line:" + line);
                 }
                 if (matchMap.size()>0 && matchMap.size() % INSERT_BLOCK_SIZE == 0) {
@@ -331,6 +340,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     classificationEntryMap.put(idClassificationEntry, classificationEntry);
                 }
             } catch (Exception e) {
+                release.setLinesClassificationErrors(release.getLinesClassificationErrors() + 1);
+                releaseDAO.update(release);
                 logger.error("updateClassifications ->" + e.getMessage() + " in line:" + line);
             }
             if (linesCount%LINES_BLOCK_SIZE==0) {
@@ -376,7 +387,6 @@ public class ReleaseManagerImpl implements ReleaseManager {
         releaseDAO.update(release);
 
     }
-
 
     public static final String calculateMd5FromBucket(String bucket, String releaseId) throws IOException {
         GcsFilename gcsFilename = new GcsFilename(bucket, releaseId + ".csv");
@@ -474,6 +484,11 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setLinesCompetitions(0);
         release.setLinesMatches(0);
         release.setLinesClassification(0);
+        release.setLinesTeamsErrors(0);
+        release.setLinesPlacesErrors(0);
+        release.setLinesCompetitionsErrors(0);
+        release.setLinesMatchesErrors(0);
+        release.setLinesClassificationErrors(0);
         releaseDAO.create(release);
     }
 

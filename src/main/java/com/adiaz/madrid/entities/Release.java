@@ -38,9 +38,14 @@ public class Release {
     Boolean updatedClassification;
 
     Integer linesTeams;
+    Integer linesTeamsErrors;
     Integer linesPlaces;
+    Integer linesPlacesErrors;
     Integer linesCompetitions;
+    Integer linesCompetitionsErrors;
     Integer linesMatches;
+    Integer linesMatchesErrors;
     Integer linesClassification;
+    Integer linesClassificationErrors;
 
 }
