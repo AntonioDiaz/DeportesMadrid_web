@@ -1,10 +1,10 @@
 package com.adiaz.madrid.services;
 
-import com.adiaz.madrid.daos.CompetitionDAO;
+import com.adiaz.madrid.daos.GroupDAO;
 import com.adiaz.madrid.daos.MatchDAO;
 import com.adiaz.madrid.daos.PlaceDAO;
 import com.adiaz.madrid.daos.TeamDAO;
-import com.adiaz.madrid.entities.Competition;
+import com.adiaz.madrid.entities.Group;
 import com.adiaz.madrid.entities.Match;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ public class MatchesManagerImpl implements MatchesManager {
     MatchDAO matchDAO;
 
     @Autowired
-    CompetitionDAO competitionDAO;
+    GroupDAO groupDAO;
 
     @Autowired
     TeamDAO teamDAO;
@@ -32,9 +32,9 @@ public class MatchesManagerImpl implements MatchesManager {
     }
 
     @Override
-    public List<Match> findMatchesByCompetition(String idCompeticion) {
-        Competition competition = competitionDAO.findById(idCompeticion);
-        List<Match> matchList = matchDAO.findByCompeticion(idCompeticion);
+    public List<Match> findMatchesByIdGroup(String idGroup) {
+        Group competition = groupDAO.findById(idGroup);
+        List<Match> matchList = matchDAO.findByCompeticion(idGroup);
         for (Match match : matchList) {
             match.setCompetition(competition);
             match.setTeamLocal(teamDAO.findById(match.getIdTeamLocal()));

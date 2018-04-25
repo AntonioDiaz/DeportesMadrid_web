@@ -69,25 +69,25 @@
             || $("#fase").prop('selectedIndex')==0) {
             showDialogAlert("seleccione: temporada > competicion > fase > grupo")
         } else {
-            var idCompeticion = $("#temporada").val();
-            idCompeticion += "|" + $("#competicion").val();
-            idCompeticion += "|" + $("#fase").val();
-            idCompeticion += "|" + $("#grupo").val();
-            var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("/server/findCompetition", params, function(competitionFull) {
+            var idGroup = $("#temporada").val();
+            idGroup += "|" + $("#competicion").val();
+            idGroup += "|" + $("#fase").val();
+            idGroup += "|" + $("#grupo").val();
+            var params = {cod_group: idGroup};
+            peticionJqueryAjax("/server/findGroup", params, function(groupFull) {
                 $("#results").show();
-                $("#results_count").text(competitionFull.classification.length);
+                $("#results_count").text(groupFull.classification.length);
                 $("#result_list").empty();
                 let resultList = $("#result_list").append("<ul class=\"list-group\">");
-                competitionFull.classification.forEach((entry, index) => {
+                groupFull.classification.forEach((entry, index) => {
                     if (index==0) {
-                        let competicion = "<br>temporada: " + competitionFull.competition.nombreTemporada;
-                        competicion += " <br>competición: " + competitionFull.competition.nombreCompeticion;
-                        competicion += " <br>fase: " + competitionFull.competition.nombreFase;
-                        competicion += " <br>grupo: " + competitionFull.competition.nombreGrupo;
-                        competicion += " <br>deporte: " + competitionFull.competition.deporte;
-                        competicion += " <br>distrito: " + competitionFull.competition.distrito;
-                        $("#results_count").append(competicion);
+                        let groupHtml = "<br>temporada: " + groupFull.group.nombreTemporada;
+                        groupHtml += " <br>competición: " + groupFull.group.nombreCompeticion;
+                        groupHtml += " <br>fase: " + groupFull.group.nombreFase;
+                        groupHtml += " <br>grupo: " + groupFull.group.nombreGrupo;
+                        groupHtml += " <br>deporte: " + groupFull.group.deporte;
+                        groupHtml += " <br>distrito: " + groupFull.group.distrito;
+                        $("#results_count").append(groupHtml);
                         let divRow = $('<div/>', {class: 'row'});
                         divRow.append($('<div/>', {class:'col-sm-1', html: "posición"}));
                         divRow.append($('<div/>', {class:'col-sm-3', html: "equipo"}));
@@ -128,25 +128,25 @@
                 || $("#fase").prop('selectedIndex')==0) {
             showDialogAlert("seleccione: temporada > competicion > fase > grupo")
         } else {
-            var idCompeticion = $("#temporada").val();
-            idCompeticion += "|" + $("#competicion").val();
-            idCompeticion += "|" + $("#fase").val();
-            idCompeticion += "|" + $("#grupo").val();
-            var params = {cod_competicion: idCompeticion};
-            peticionJqueryAjax("/server/findCompetition", params, function(competitionFull) {
+            var idGroup = $("#temporada").val();
+            idGroup += "|" + $("#competicion").val();
+            idGroup += "|" + $("#fase").val();
+            idGroup += "|" + $("#grupo").val();
+            var params = {cod_group: idGroup};
+            peticionJqueryAjax("/server/findGroup", params, function(groupFull) {
                 $("#results").show();
-                $("#results_count").text(competitionFull.matches.length);
+                $("#results_count").text(groupFull.matches.length);
                 $("#result_list").empty();
                 let resultList = $("#result_list").append("<ul class=\"list-group\">");
-                competitionFull.matches.forEach((match, index) => {
+                groupFull.matches.forEach((match, index) => {
                     if (index==0) {
-                        let competicion = "<br>temporada: " + competitionFull.competition.nombreTemporada;
-                        competicion += " <br>competición: " + competitionFull.competition.nombreCompeticion;
-                        competicion += " <br>fase: " + competitionFull.competition.nombreFase;
-                        competicion += " <br>grupo: " + competitionFull.competition.nombreGrupo;
-                        competicion += " <br>deporte: " + competitionFull.competition.deporte;
-                        competicion += " <br>distrito: " + competitionFull.competition.distrito;
-                        $("#results_count").append(competicion);
+                        let groupHtml = "<br>temporada: " + groupFull.group.nombreTemporada;
+                        groupHtml += " <br>competición: " + groupFull.group.nombreCompeticion;
+                        groupHtml += " <br>fase: " + groupFull.group.nombreFase;
+                        groupHtml += " <br>grupo: " + groupFull.group.nombreGrupo;
+                        groupHtml += " <br>deporte: " + groupFull.group.deporte;
+                        groupHtml += " <br>distrito: " + groupFull.group.distrito;
+                        $("#results_count").append(groupHtml);
                         let divRow = $('<div/>', {class: 'row'});
                         divRow.append($('<div/>', {class:'col-sm-1', html: "jornada"}));
                         divRow.append($('<div/>', {class:'col-sm-1', html: "partido"}));
@@ -194,7 +194,7 @@
         if ($("#temporada").prop('selectedIndex')>0) {
             $('#competicion').prop('disabled', false);
             var params = {cod_temporada: $("#temporada").val()};
-            peticionJqueryAjax("competitions", params, function (data) {
+            peticionJqueryAjax("groups", params, function (data) {
                 $('#competicion').append($('<option>', {
                     value: "",
                     text : ""

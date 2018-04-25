@@ -3,7 +3,7 @@
     <datastore-index kind="ReleaseClassification" ancestor="false" source="manual">
         <property name="__key__" direction="desc"/>
     </datastore-index>
-    <datastore-index kind="Competition" ancestor="false" source="manual">
+    <datastore-index kind="Group" ancestor="false" source="manual">
         <property name="deporte" direction="asc"/>
         <property name="distrito" direction="asc"/>
     </datastore-index>
@@ -11,7 +11,7 @@
         <property name="__key__" direction="desc"/>
     </datastore-index>
     <datastore-index kind="CLASSIFICATION_ENTITY" ancestor="false" source="manual">
-        <property name="idCompetition" direction="asc"/>
+        <property name="idGroup" direction="asc"/>
         <property name="position" direction="asc"/>
     </datastore-index>
 </datastore-indexes>

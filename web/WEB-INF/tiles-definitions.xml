@@ -65,14 +65,14 @@
         <put-attribute name="body" value="/WEB-INF/jsp/places_list.jsp"/>
     </definition>
 
-    <definition name="competitions_list" extends="homeTemplate">
-        <put-attribute name="page_title" value="Lista de competiciones"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/competitions_list.jsp"/>
+    <definition name="groups_list" extends="homeTemplate">
+        <put-attribute name="page_title" value="Lista de grupos"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/groups_list.jsp"/>
     </definition>
 
-    <definition name="competitions_sports_list" extends="homeTemplate">
+    <definition name="groups_sports_list" extends="homeTemplate">
         <put-attribute name="page_title" value="Lista de deportes"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/competitions_sports_list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/groups_sports_list.jsp"/>
     </definition>
 
     <definition name="matches_list" extends="homeTemplate">

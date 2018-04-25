@@ -50,7 +50,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
     PlaceDAO placeDAO;
 
     @Autowired
-    CompetitionDAO competitionDAO;
+    GroupDAO groupDAO;
 
     @Autowired
     MatchDAO matchDAO;
@@ -167,62 +167,62 @@ public class ReleaseManagerImpl implements ReleaseManager {
     }
 
     @Override
-    public void updateCompetitions(String idRelease) throws Exception {
+    public void updateGroups(String idRelease) throws Exception {
         Release release = releaseDAO.findById(idRelease);
         Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
-        Map<String, Competition> competitionMap = new HashMap<>();
+        Map<String, Group> groupsMap = new HashMap<>();
         Integer linesCount = 1;
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            if (release.getLinesCompetitions()<=linesCount) {
+            if (release.getLinesGroups()<=linesCount) {
                 try {
                     MatchLineEntity matchLineEntity = new MatchLineEntity(line);
-                    Competition competition = new Competition();
+                    Group group = new Group();
                     Integer codTemporada = matchLineEntity.getField00_codTemporada();
                     String codCompeticion = matchLineEntity.getField01_codCompeticion();
                     Integer codFase = matchLineEntity.getField02_codFase();
                     Integer codGrupo = matchLineEntity.getField03_codGrupo();
-                    String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
-                    competition.setCodTemporada(codTemporada);
-                    competition.setCodCompeticion( codCompeticion);
-                    competition.setCodFase(codFase);
-                    competition.setCodGrupo(codGrupo);
-                    competition.setId(idCompetition);
-                    competition.setNombreTemporada(matchLineEntity.getField15_nombreTemporada());
-                    competition.setNombreCompeticion(matchLineEntity.getField16_nombreCompeticion());
-                    competition.setNombreFase(matchLineEntity.getField17_nombreFase());
-                    competition.setNombreGrupo(matchLineEntity.getField18_nombreGrupo());
-                    competition.setDeporte(matchLineEntity.getField19_nombreDeporte());
-                    competition.setCategoria(matchLineEntity.getField20_nombreCategoria());
-                    competition.setDistrito(matchLineEntity.getField26_distrito());
-                    Competition competitionOriginal = competitionDAO.findById(idCompetition);
-                    if (competitionOriginal==null || !competitionOriginal.equals(competition)) {
-                        competitionMap.put(competition.getId(), competition);
+                    String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
+                    group.setCodTemporada(codTemporada);
+                    group.setCodCompeticion( codCompeticion);
+                    group.setCodFase(codFase);
+                    group.setCodGrupo(codGrupo);
+                    group.setId(idGroup);
+                    group.setNombreTemporada(matchLineEntity.getField15_nombreTemporada());
+                    group.setNombreCompeticion(matchLineEntity.getField16_nombreCompeticion());
+                    group.setNombreFase(matchLineEntity.getField17_nombreFase());
+                    group.setNombreGrupo(matchLineEntity.getField18_nombreGrupo());
+                    group.setDeporte(matchLineEntity.getField19_nombreDeporte());
+                    group.setCategoria(matchLineEntity.getField20_nombreCategoria());
+                    group.setDistrito(matchLineEntity.getField26_distrito());
+                    Group groupOriginal = groupDAO.findById(idGroup);
+                    if (groupOriginal==null || !groupOriginal.equals(group)) {
+                        groupsMap.put(group.getId(), group);
                     }
                 } catch (Exception e) {
-                    release.setLinesCompetitionsErrors(release.getLinesCompetitionsErrors() + 1);
+                    release.setLinesGroupsErrors(release.getLinesGroupsErrors() + 1);
                     releaseDAO.update(release);
-                    logger.error("updateCompetitions ->" + e.getMessage() + " in line:" + line);
+                    logger.error("updateGroups ->" + e.getMessage() + " in line:" + line);
                 }
-                if (competitionMap.size()>0 && competitionMap.size() % INSERT_BLOCK_SIZE == 0) {
-                    competitionDAO.insertList(competitionMap.values());
-                    competitionMap = new HashMap<>();
+                if (groupsMap.size()>0 && groupsMap.size() % INSERT_BLOCK_SIZE == 0) {
+                    groupDAO.insertList(groupsMap.values());
+                    groupsMap = new HashMap<>();
                 }
                 if (linesCount % LINES_BLOCK_SIZE == 0) {
-                    logger.debug("update competitions --> " + linesCount );
-                    release.setLinesCompetitions(linesCount);
+                    logger.debug("update group --> " + linesCount );
+                    release.setLinesGroups(linesCount);
                     releaseDAO.update(release);
                 }
             }
         }
         scanner.close();
-        competitionDAO.insertList(competitionMap.values());
-        release.setLinesCompetitions(linesCount);
-        release.setUpdatedCompetitions(true);
+        groupDAO.insertList(groupsMap.values());
+        release.setLinesGroups(linesCount);
+        release.setUpdatedGroups(true);
         releaseDAO.update(release);
-        logger.debug("last update competitions --> " + linesCount );
+        logger.debug("last update group --> " + linesCount );
     }
 
     @Override
@@ -239,18 +239,18 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 try {
                     MatchLineEntity matchLineEntity = new MatchLineEntity(line);
                     Match match = new Match();
-                    //find competition
+                    //find group
                     Integer codTemporada = matchLineEntity.getField00_codTemporada();
                     String codCompeticion = matchLineEntity.getField01_codCompeticion();
                     Integer codFase = matchLineEntity.getField02_codFase();
                     Integer codGrupo = matchLineEntity.getField03_codGrupo();
                     Integer weekNumber = matchLineEntity.getField04_weekNum();
                     Integer matchNumber = matchLineEntity.getField05_matchNum();
-                    String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
+                    String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
                     String idMatch = DeportesMadridUtils.generateIdMatch(codTemporada, codCompeticion, codFase, codGrupo, weekNumber, matchNumber);
                     String dateStr = matchLineEntity.getField11_fecha() + " " + matchLineEntity.getField12_hora();
                     match.setId(idMatch);
-                    match.setIdCompetition(idCompetition);
+                    match.setIdGroup(idGroup);
                     match.setIdTeamLocal(matchLineEntity.getField06_codEquipoLocal());
                     match.setIdTeamVisitor(matchLineEntity.getField07_codEquipoVisitante());
                     match.setIdPlace(matchLineEntity.getField10_codCampo());
@@ -321,10 +321,10 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 Integer codFase = classificationLineEntity.getField02_codFase();
                 Integer codGrupo = classificationLineEntity.getField03_codGrupo();
                 Long codEquipo = classificationLineEntity.getField04_codEquipo();
-                String idCompetition = DeportesMadridUtils.generateIdCompetition(codTemporada, codCompeticion, codFase, codGrupo);
+                String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
                 String idClassificationEntry = DeportesMadridUtils.generateIdClassification(codTemporada, codCompeticion, codFase, codGrupo, codEquipo);
                 ClassificationEntry classificationEntry = new ClassificationEntry();
-                classificationEntry.setIdCompetition(idCompetition);
+                classificationEntry.setIdGroup(idGroup);
                 classificationEntry.setId(idClassificationEntry);
                 classificationEntry.setIdTeam(codEquipo);
                 classificationEntry.setPosition(classificationLineEntity.getField05_posicion());
@@ -374,8 +374,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
         if (!release.getUpdatedPlaces()) {
             updatePlaces(release.getId());
         }
-        if (!release.getUpdatedCompetitions()) {
-            updateCompetitions(release.getId());
+        if (!release.getUpdatedGroups()) {
+            updateGroups(release.getId());
         }
         if (!release.getUpdatedMatches()) {
             updateMatches(release.getId());
@@ -475,18 +475,18 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setUpdatedTeams(false);
         release.setUpdatedPlaces(false);
         release.setUpdatedMatches(false);
-        release.setUpdatedCompetitions(false);
+        release.setUpdatedGroups(false);
         release.setUpdatedClassification(false);
         release.setLinesFileMatches(countLines(dateStr, DeportesMadridConstants.BUCKET_MATCHES));
         release.setLinesFileClassifications(countLines(dateStr, DeportesMadridConstants.BUCKET_CLASSIFICATION));
         release.setLinesTeams(0);
         release.setLinesPlaces(0);
-        release.setLinesCompetitions(0);
+        release.setLinesGroups(0);
         release.setLinesMatches(0);
         release.setLinesClassification(0);
         release.setLinesTeamsErrors(0);
         release.setLinesPlacesErrors(0);
-        release.setLinesCompetitionsErrors(0);
+        release.setLinesGroupsErrors(0);
         release.setLinesMatchesErrors(0);
         release.setLinesClassificationErrors(0);
         releaseDAO.create(release);

@@ -8,6 +8,6 @@ public interface ClassificationManager {
 
     int classificationCount();
 
-    List<ClassificationEntry> findClassificationByCompetition(String idCompeticion);
+    List<ClassificationEntry> findClassificationByIdGroup(String idCompeticion);
 
 }

@@ -2,7 +2,6 @@ package com.adiaz.madrid.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,14 +10,14 @@ import java.util.Date;
 
 @Entity (name = "MATCH_ENTITY")
 @Data
-@EqualsAndHashCode(exclude={"competition", "teamLocal", "teamVisitor", "place"})
+@EqualsAndHashCode(exclude={"group", "teamLocal", "teamVisitor", "place"})
 public class Match {
 
     @Id
     private String id;
 
     @Index
-    private String idCompetition;
+    private String idGroup;
 
     @Index
     private Long idTeamLocal;
@@ -31,7 +30,7 @@ public class Match {
 
     @Ignore
     @JsonIgnore
-    private Competition competition;
+    private Group competition;
 
     @Ignore
     private Team teamLocal;

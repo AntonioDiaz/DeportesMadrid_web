@@ -29,7 +29,7 @@ public class ClassificationEntryDAOImpl implements ClassificationDAO {
     @Override
     public List<ClassificationEntry> findByCompeticion(String idCompeticion) {
         Query<ClassificationEntry> query = ofy().load().type(ClassificationEntry.class)
-                .filter("idCompetition", idCompeticion)
+                .filter("idGroup", idCompeticion)
                 .order("position");
         return query.list();
     }

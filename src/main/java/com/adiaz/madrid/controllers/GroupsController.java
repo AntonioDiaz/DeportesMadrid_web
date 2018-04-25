@@ -1,8 +1,8 @@
 package com.adiaz.madrid.controllers;
 
 
-import com.adiaz.madrid.entities.Competition;
-import com.adiaz.madrid.services.CompetitionsManager;
+import com.adiaz.madrid.entities.Group;
+import com.adiaz.madrid.services.GroupManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,31 +15,31 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-@RequestMapping ("/competitions")
-public class CompetitionsController {
+@RequestMapping ("/groups")
+public class GroupsController {
 
     @Autowired
-    CompetitionsManager competitionsManager;
+    GroupManager groupManager;
 
-    private static final Logger logger = Logger.getLogger(CompetitionsController.class);
+    private static final Logger logger = Logger.getLogger(GroupsController.class);
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView list(){
-        ModelAndView modelAndView = new ModelAndView("competitions_list");
-        modelAndView.addObject("competitions_number", competitionsManager.competitionsCount());
+        ModelAndView modelAndView = new ModelAndView("groups_list");
+        modelAndView.addObject("groups_number", groupManager.countGroups());
         return modelAndView;
     }
 
     @RequestMapping(value = "/sports_list", method = RequestMethod.GET)
     public ModelAndView sportsList(){
-        ModelAndView modelAndView = new ModelAndView("competitions_sports_list");
-        modelAndView.addObject("sports_list_count", competitionsManager.distinctSportsCount());
+        ModelAndView modelAndView = new ModelAndView("groups_sports_list");
+        modelAndView.addObject("sports_list_count", groupManager.distinctSportsCount());
         return modelAndView;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
-    public List<Competition> search(@RequestParam(value = "competition_name") String competitionName) {
-        return competitionsManager.findCompetitions(competitionName.toUpperCase());
+    public List<Group> search(@RequestParam(value = "group_name") String groupName) {
+        return groupManager.findGroups(groupName.toUpperCase());
     }
 }

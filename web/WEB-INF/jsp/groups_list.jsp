@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function () {
-        $("#competitionName").on('keyup', function (e) {
+        $("#groupName").on('keyup', function (e) {
             if (e.keyCode == 13) {
                 fSearch();
             }
@@ -9,7 +9,7 @@
 
     function fSearch(){
         switchLoading(true);
-        var params = {competition_name: $("#competitionName").val()};
+        var params = {group_name: $("#groupName").val()};
         peticionJqueryAjax("search", params);
     }
 
@@ -78,16 +78,16 @@
 <div id="contentDiv">
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3" >Número total de competiciones</label>
-            <div class="col-sm-2"><div class="bg-success text-white">${competitions_number}</div></div>
+            <label class="control-label col-sm-3" >Número total de grupos</label>
+            <div class="col-sm-2"><div class="bg-success text-white">${groups_number}</div></div>
         </div>
     </div>
     <br>
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3">Nombre de Competición</label>
+            <label class="control-label col-sm-3">Nombre del grupo</label>
             <div class="col-sm-6">
-                <input id="competitionName" class="form-control"></input>
+                <input id="groupName" class="form-control"></input>
             </div>
             <div class="col-sm-2">
                 <button type="button" class="btn btn-primary" onclick="fSearch();">
@@ -100,11 +100,11 @@
         <br>
         <div class="row" >
             <div class="form-group">
-                <label class="control-label col-sm-3" >Resultado busqueda</label>
+                <label class="control-label col-sm-3">Resultado busqueda</label>
                 <div class="col-sm-2"><div id="results_count" class="bg-info text-white"></div></div>
             </div>
         </div>
-        <div id="result_list" class="row result_list" >
+        <div id="result_list" class="row result_list">
         </div>
     </div>
 </div>

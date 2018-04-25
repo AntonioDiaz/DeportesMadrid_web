@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class SportsCountEntity {
     String sportName;
-    Integer competitionsCount;
+    Integer groupsCount;
 
-    public SportsCountEntity(String sportName, Integer competitionsCount) {
+    public SportsCountEntity(String sportName, Integer groupsCount) {
         this.sportName = sportName;
-        this.competitionsCount = competitionsCount;
+        this.groupsCount = groupsCount;
     }
 }

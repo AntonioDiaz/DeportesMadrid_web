@@ -33,7 +33,7 @@ public class Release {
 
     Boolean updatedTeams;
     Boolean updatedPlaces;
-    Boolean updatedCompetitions;
+    Boolean updatedGroups;
     Boolean updatedMatches;
     Boolean updatedClassification;
 
@@ -41,8 +41,8 @@ public class Release {
     Integer linesTeamsErrors;
     Integer linesPlaces;
     Integer linesPlacesErrors;
-    Integer linesCompetitions;
-    Integer linesCompetitionsErrors;
+    Integer linesGroups;
+    Integer linesGroupsErrors;
     Integer linesMatches;
     Integer linesMatchesErrors;
     Integer linesClassification;

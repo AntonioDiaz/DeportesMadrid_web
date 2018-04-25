@@ -6,21 +6,22 @@ import lombok.EqualsAndHashCode;
 
 @Entity (name = "CLASSIFICATION_ENTITY")
 @Data
-@EqualsAndHashCode(exclude={"competition", "team"})
+@EqualsAndHashCode(exclude={"group", "team"})
 public class ClassificationEntry {
 
     @Id
     private String id;
 
     @Index
-    private String idCompetition;
+    private String idGroup;
 
 
     @Index
     Long idTeam;
 
     @Ignore
-    private Competition competition;
+    private Group group;
+
     @Ignore
     private Team team;
 

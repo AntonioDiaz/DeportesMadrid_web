@@ -1,11 +1,9 @@
 package com.adiaz.madrid.controllers;
 
 
-import com.adiaz.madrid.entities.ClassificationEntry;
-import com.adiaz.madrid.entities.Competition;
-import com.adiaz.madrid.entities.Match;
+import com.adiaz.madrid.entities.Group;
 import com.adiaz.madrid.services.ClassificationManager;
-import com.adiaz.madrid.services.CompetitionsManager;
+import com.adiaz.madrid.services.GroupManager;
 import com.adiaz.madrid.services.MatchesManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ public class MatchesController {
     MatchesManager matchesManager;
 
     @Autowired
-    CompetitionsManager competitionsManager;
+    GroupManager groupManager;
 
     @Autowired
     ClassificationManager classificationManager;
@@ -36,7 +34,7 @@ public class MatchesController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ModelAndView list(){
         ModelAndView modelAndView = new ModelAndView("matches_list");
-        modelAndView.addObject("temporadas", competitionsManager.distinctTemporadas());
+        modelAndView.addObject("temporadas", groupManager.distinctTemporadas());
         return modelAndView;
     }
 
@@ -46,30 +44,30 @@ public class MatchesController {
         return matchesManager.matchesCount();
     }
 
-
     @RequestMapping(value = "/countClassifications", method = RequestMethod.GET)
     @ResponseBody
     public Integer countClassifications(){
         return classificationManager.classificationCount();
     }
 
-    @RequestMapping(value = "/competitions", method = RequestMethod.GET)
+    @RequestMapping(value = "/groups", method = RequestMethod.GET)
     @ResponseBody
-    public List<Competition> competitions(@RequestParam(value = "cod_temporada") Integer codTemporada) {
-        return competitionsManager.distinctCompeticion(codTemporada);
+    public List<Group> groups(@RequestParam(value = "cod_temporada") Integer codTemporada) {
+        return groupManager.distinctGroups(codTemporada);
     }
 
     @RequestMapping(value = "/fases", method = RequestMethod.GET)
     @ResponseBody
-    public List<Competition> fases(@RequestParam(value = "cod_temporada") Integer codTemporada, @RequestParam(value = "cod_competicion") String codCompeticion) {
-        return competitionsManager.distinctFase(codTemporada, codCompeticion);
+    public List<Group> fases(@RequestParam(value = "cod_temporada") Integer codTemporada,
+                             @RequestParam(value = "cod_competicion") String codCompeticion) {
+        return groupManager.distinctGroups(codTemporada, codCompeticion);
     }
 
     @RequestMapping(value = "/grupos", method = RequestMethod.GET)
     @ResponseBody
-    public List<Competition> grupos(@RequestParam(value = "cod_temporada") Integer codTemporada,
-                                    @RequestParam(value = "cod_competicion") String codCompeticion,
-                                    @RequestParam(value = "cod_fase") Integer codFase) {
-        return competitionsManager.distinctGrupo(codTemporada, codCompeticion, codFase);
+    public List<Group> grupos(@RequestParam(value = "cod_temporada") Integer codTemporada,
+                              @RequestParam(value = "cod_competicion") String codCompeticion,
+                              @RequestParam(value = "cod_fase") Integer codFase) {
+        return groupManager.distinctGroups(codTemporada, codCompeticion, codFase);
     }
 }

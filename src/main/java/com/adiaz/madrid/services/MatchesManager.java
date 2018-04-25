@@ -8,5 +8,5 @@ import java.util.List;
 public interface MatchesManager {
 
     int matchesCount();
-    List<Match> findMatchesByCompetition(String idCompeticion);
+    List<Match> findMatchesByIdGroup(String idGroup);
 }

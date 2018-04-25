@@ -8,7 +8,7 @@
     <c:forEach var="sport_count" items="${sports_list_count}">
         <div class="row">
             <label class="control-label col-sm-3">${sport_count.sportName}</label>
-            <div class="col-sm-2"><div class="bg-success text-white">${sport_count.competitionsCount}</div></div>
+            <div class="col-sm-2"><div class="bg-success text-white">${sport_count.groupsCount}</div></div>
         </div>
     </c:forEach>
 </div>

@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode
-public class Competition {
+public class Group {
 
     @Id
     private String id;

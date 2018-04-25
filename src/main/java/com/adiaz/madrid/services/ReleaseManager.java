@@ -15,7 +15,7 @@ public interface ReleaseManager {
 
     void updatePlaces(String idRelease) throws Exception;
 
-    void updateCompetitions(String idRelease) throws Exception;
+    void updateGroups(String idRelease) throws Exception;
 
     void updateMatches(String idRelease) throws Exception;
 

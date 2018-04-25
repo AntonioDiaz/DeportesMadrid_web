@@ -70,7 +70,7 @@ public class MatchDAOImpl implements MatchDAO {
     @Override
     public List<Match> findByCompeticion(String idCompeticion) {
         Query<Match> query = ofy().load().type(Match.class)
-                .filter("idCompetition", idCompeticion)
+                .filter("idGroup", idCompeticion)
                 .order("numWeek")
                 .order("numMatch");
         return query.list();
