@@ -15,6 +15,7 @@ public class Team {
 
     @Id
     private Long id;
+
     @Index
     private String name;
 

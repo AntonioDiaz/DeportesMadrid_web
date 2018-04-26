@@ -41,7 +41,6 @@ public class ReleaseManagerImpl implements ReleaseManager {
             .build());
 
     private static final int INSERT_BLOCK_SIZE = 300;
-    private static final int LINES_BLOCK_SIZE = 500;
 
     @Autowired
     TeamDAO teamDAO;
@@ -100,23 +99,23 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     logger.error("updateTeams ->" + e.getMessage() + " in line:" + line);
 
                 }
-                if (teamsMap.size() > 0 && teamsMap.size() % INSERT_BLOCK_SIZE == 0) {
+                if (linesCount % INSERT_BLOCK_SIZE == 0) {
+                    logger.debug("1. updateplaces saving teams " + teamsMap.size());
                     teamDAO.insertList(teamsMap.values());
                     teamsMap = new HashMap<>();
-                }
-                if (linesCount % LINES_BLOCK_SIZE == 0) {
-                    logger.debug("updateTeams linesCount ->" + linesCount);
                     release.setLinesTeams(linesCount);
                     releaseDAO.update(release);
+                    logger.debug("1. updateTeams linesCount ->" + linesCount);
                 }
             }
         }
         scanner.close();
+        logger.debug("2. updateplaces saving teams " + teamsMap.size());
         teamDAO.insertList(teamsMap.values());
         release.setLinesTeams(linesCount);
         release.setUpdatedTeams(true);
         releaseDAO.update(release);
-        logger.debug("last updateTeams linesCount ->" + linesCount);
+        logger.debug("2. updateTeams linesCount ->" + linesCount);
     }
 
     @Override
@@ -148,22 +147,22 @@ public class ReleaseManagerImpl implements ReleaseManager {
                 releaseDAO.update(release);
                 logger.error("updatePlaces ->" + e.getMessage() + " in line:" + line);
             }
-            if (placesMap.size()>0 && placesMap.size() % INSERT_BLOCK_SIZE == 0) {
+            if (linesCount % INSERT_BLOCK_SIZE == 0) {
+                logger.debug("1. updateplaces saving places " + placesMap.size());
                 placeDAO.insertList(placesMap.values());
                 placesMap = new HashMap<>();
-            }
-            if (linesCount % LINES_BLOCK_SIZE == 0) {
-                logger.debug("updateplaces --> " +linesCount );
                 release.setLinesPlaces(linesCount);
                 releaseDAO.update(release);
+                logger.debug("1. updateplaces linesCount ->" + linesCount);
             }
         }
         scanner.close();
+        logger.debug("2. updateplaces saving teams " + placesMap.size());
         placeDAO.insertList(placesMap.values());
         release.setLinesPlaces(linesCount);
         release.setUpdatedPlaces(true);
         releaseDAO.update(release);
-        logger.debug("last updateplaces --> " +linesCount );
+        logger.debug("2. updateplaces linesCount ->" + linesCount);
     }
 
     @Override
@@ -206,23 +205,23 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     releaseDAO.update(release);
                     logger.error("updateGroups ->" + e.getMessage() + " in line:" + line);
                 }
-                if (groupsMap.size()>0 && groupsMap.size() % INSERT_BLOCK_SIZE == 0) {
+                if (linesCount % INSERT_BLOCK_SIZE == 0) {
+                    logger.debug("1. updateGroups saving groups " + groupsMap.size());
                     groupDAO.insertList(groupsMap.values());
                     groupsMap = new HashMap<>();
-                }
-                if (linesCount % LINES_BLOCK_SIZE == 0) {
-                    logger.debug("update group --> " + linesCount );
                     release.setLinesGroups(linesCount);
                     releaseDAO.update(release);
+                    logger.debug("1. updateGroups --> " + linesCount );
                 }
             }
         }
         scanner.close();
+        logger.debug("2. updateGroups saving groups " + groupsMap.size());
         groupDAO.insertList(groupsMap.values());
         release.setLinesGroups(linesCount);
         release.setUpdatedGroups(true);
         releaseDAO.update(release);
-        logger.debug("last update group --> " + linesCount );
+        logger.debug("2. updateGroups --> " + linesCount );
     }
 
     @Override
@@ -270,19 +269,18 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     releaseDAO.update(release);
                     logger.error("updateMatches ->" + e.getMessage() + " in line:" + line);
                 }
-                if (matchMap.size()>0 && matchMap.size() % INSERT_BLOCK_SIZE == 0) {
-                    logger.debug("1. updateamatches insert size -->" + matchMap.size());
+                if (linesCount % INSERT_BLOCK_SIZE == 0) {
+                    logger.debug("1. updateMatches saving places " + matchMap.size());
                     matchDAO.insertList(matchMap.values());
                     matchMap = new HashMap<>();
-                }
-                if (linesCount % LINES_BLOCK_SIZE == 0) {
-                    logger.debug("updatematches lines --> " + linesCount );
                     release.setLinesMatches(linesCount);
                     releaseDAO.update(release);
+                    logger.debug("updatematches lines --> " + linesCount );
                 }
             }
         }
         scanner.close();
+        logger.debug("2. updateMatches saving places " + matchMap.size());
         matchDAO.insertList(matchMap.values());
         release.setLinesMatches(linesCount);
         release.setUpdatedMatches(true);
@@ -314,52 +312,54 @@ public class ReleaseManagerImpl implements ReleaseManager {
         while (scanner.hasNextLine()) {
             linesCount++;
             String line = scanner.nextLine();
-            try {
-                ClassificationLineEntity classificationLineEntity = new ClassificationLineEntity(line);
-                Integer codTemporada = classificationLineEntity.getField00_codTemporada();
-                String codCompeticion = classificationLineEntity.getField01_codCompeticion();
-                Integer codFase = classificationLineEntity.getField02_codFase();
-                Integer codGrupo = classificationLineEntity.getField03_codGrupo();
-                Long codEquipo = classificationLineEntity.getField04_codEquipo();
-                String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
-                String idClassificationEntry = DeportesMadridUtils.generateIdClassification(codTemporada, codCompeticion, codFase, codGrupo, codEquipo);
-                ClassificationEntry classificationEntry = new ClassificationEntry();
-                classificationEntry.setIdGroup(idGroup);
-                classificationEntry.setId(idClassificationEntry);
-                classificationEntry.setIdTeam(codEquipo);
-                classificationEntry.setPosition(classificationLineEntity.getField05_posicion());
-                classificationEntry.setPoints(classificationLineEntity.getField06_puntos());
-                classificationEntry.setMatchesPlayed(classificationLineEntity.getField07_partidosJugados());
-                classificationEntry.setMatchesWon(classificationLineEntity.getField08_partidosGanados());
-                classificationEntry.setMatchesDrawn(classificationLineEntity.getField09_partidosEmpatados());
-                classificationEntry.setMatchesLost(classificationLineEntity.getField10_partidosPerdidos());
-                classificationEntry.setPointsFavor(classificationLineEntity.getField11_golesFavor());
-                classificationEntry.setPointsAgainst(classificationLineEntity.getField12_golesContra());
-                ClassificationEntry classificationEntryOriginal = classificationDAO.findById(idClassificationEntry);
-                if (classificationEntryOriginal==null || !classificationEntry.equals(classificationEntryOriginal)) {
-                    classificationEntryMap.put(idClassificationEntry, classificationEntry);
+            if (release.getLinesClassification()<=linesCount) {
+                try {
+                    ClassificationLineEntity classificationLineEntity = new ClassificationLineEntity(line);
+                    Integer codTemporada = classificationLineEntity.getField00_codTemporada();
+                    String codCompeticion = classificationLineEntity.getField01_codCompeticion();
+                    Integer codFase = classificationLineEntity.getField02_codFase();
+                    Integer codGrupo = classificationLineEntity.getField03_codGrupo();
+                    Long codEquipo = classificationLineEntity.getField04_codEquipo();
+                    String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
+                    String idClassificationEntry = DeportesMadridUtils.generateIdClassification(codTemporada, codCompeticion, codFase, codGrupo, codEquipo);
+                    ClassificationEntry classificationEntry = new ClassificationEntry();
+                    classificationEntry.setIdGroup(idGroup);
+                    classificationEntry.setId(idClassificationEntry);
+                    classificationEntry.setIdTeam(codEquipo);
+                    classificationEntry.setPosition(classificationLineEntity.getField05_posicion());
+                    classificationEntry.setPoints(classificationLineEntity.getField06_puntos());
+                    classificationEntry.setMatchesPlayed(classificationLineEntity.getField07_partidosJugados());
+                    classificationEntry.setMatchesWon(classificationLineEntity.getField08_partidosGanados());
+                    classificationEntry.setMatchesDrawn(classificationLineEntity.getField09_partidosEmpatados());
+                    classificationEntry.setMatchesLost(classificationLineEntity.getField10_partidosPerdidos());
+                    classificationEntry.setPointsFavor(classificationLineEntity.getField11_golesFavor());
+                    classificationEntry.setPointsAgainst(classificationLineEntity.getField12_golesContra());
+                    ClassificationEntry classificationEntryOriginal = classificationDAO.findById(idClassificationEntry);
+                    if (classificationEntryOriginal==null || !classificationEntry.equals(classificationEntryOriginal)) {
+                        classificationEntryMap.put(idClassificationEntry, classificationEntry);
+                    }
+                } catch (Exception e) {
+                    release.setLinesClassificationErrors(release.getLinesClassificationErrors() + 1);
+                    releaseDAO.update(release);
+                    logger.error("updateClassifications ->" + e.getMessage() + " in line:" + line);
                 }
-            } catch (Exception e) {
-                release.setLinesClassificationErrors(release.getLinesClassificationErrors() + 1);
-                releaseDAO.update(release);
-                logger.error("updateClassifications ->" + e.getMessage() + " in line:" + line);
-            }
-            if (linesCount%LINES_BLOCK_SIZE==0) {
-                logger.debug("4 updateclassifications --> " + linesCount );
-                release.setLinesClassification(linesCount);
-                releaseDAO.update(release);
-            }
-            if (classificationEntryMap.size()>0 && classificationEntryMap.size()%INSERT_BLOCK_SIZE==0) {
-                classificationDAO.insertList(classificationEntryMap.values());
-                classificationEntryMap = new HashMap<>();
+                if (linesCount%INSERT_BLOCK_SIZE == 0) {
+                    logger.debug("1. updateclassifications saving places " + classificationEntryMap.size());
+                    classificationDAO.insertList(classificationEntryMap.values());
+                    classificationEntryMap = new HashMap<>();
+                    release.setLinesClassification(linesCount);
+                    releaseDAO.update(release);
+                    logger.debug("1. updateclassifications --> " + linesCount );
+                }
             }
         }
         scanner.close();
+        logger.debug("2. updateclassifications saving places " + classificationEntryMap.size());
         classificationDAO.insertList(classificationEntryMap.values());
-        logger.debug("last update classifications --> " + linesCount );
         release.setLinesClassification(linesCount);
         release.setUpdatedClassification(true);
         releaseDAO.update(release);
+        logger.debug("2. updateclassifications --> " + linesCount );
     }
 
 

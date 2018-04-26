@@ -1,10 +1,10 @@
 package com.adiaz.madrid.utils;
 
 public class DeportesMadridConstants {
-    //public static final String URL_MATCHES = "https://datos.madrid.es/egob/catalogo/211549-3-juegos-deportivos-actual.csv";
-    //public static final String URL_CLASSIFICATION = "https://datos.madrid.es/egob/catalogo/211549-1-juegos-deportivos-actual.csv";
-    public static final String URL_MATCHES = "http://localhost:8080/catalogo/matches.csv";
-    public static final String URL_CLASSIFICATION = "http://localhost:8080/catalogo/classification.csv";
+    public static final String URL_MATCHES = "https://datos.madrid.es/egob/catalogo/211549-3-juegos-deportivos-actual.csv";
+    public static final String URL_CLASSIFICATION = "https://datos.madrid.es/egob/catalogo/211549-1-juegos-deportivos-actual.csv";
+    //public static final String URL_MATCHES = "http://localhost:8080/catalogo/matches.csv";
+    //public static final String URL_CLASSIFICATION = "http://localhost:8080/catalogo/classification.csv";
     public static final String DESCANSA = "DESCANSA";
     public static final String BUCKET_CLASSIFICATION = "deportes_madrid_classification";
     public static final String BUCKET_MATCHES= "deportes_madrid_matches";
