@@ -1,16 +1,19 @@
 package com.adiaz.madrid.entities;
 
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 @Data
 @Entity
 @EqualsAndHashCode
-public class Group {
+public class Group implements Serializable{
 
     @Id
     private String id;

@@ -31,9 +31,9 @@ public class ClassificationManagerImpl implements ClassificationManager {
     @Override
     public List<ClassificationEntry> findClassificationByIdGroup(String idCompeticion) {
         List<ClassificationEntry> classificationEntryList = classificationDAO.findByCompeticion(idCompeticion);
-        Group competition = groupDAO.findById(idCompeticion);
+        Group group = groupDAO.findById(idCompeticion);
         for (ClassificationEntry classificationEntry : classificationEntryList) {
-            classificationEntry.setGroup(competition);
+            classificationEntry.setGroup(group);
             classificationEntry.setTeam(teamDAO.findById(classificationEntry.getIdTeam()));
         }
         return classificationEntryList;

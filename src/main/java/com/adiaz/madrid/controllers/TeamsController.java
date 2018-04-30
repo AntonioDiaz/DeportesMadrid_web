@@ -26,10 +26,4 @@ public class TeamsController {
         modelAndView.addObject("teams_number", teamManager.teamsCount());
         return modelAndView;
     }
-
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Team> search(@RequestParam(value = "team_name") String teamName) {
-        return teamManager.findTeams(teamName.toUpperCase());
-    }
 }

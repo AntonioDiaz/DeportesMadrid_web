@@ -1,6 +1,9 @@
 package com.adiaz.madrid.daos;
 
+import com.adiaz.madrid.entities.Group;
 import com.adiaz.madrid.entities.Match;
+import com.adiaz.madrid.entities.Team;
+import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
@@ -68,11 +71,26 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
+    public List<Match> findGroupsOfATeam(Long idTeam) {
+        Query<Match> query = ofy().load().type(Match.class).project("idGroup").distinct(true);
+        List<Match> matchesAsLocal = query.filter("idTeamLocal", idTeam).list();
+        List<Match> matchesAsVisitor = query.filter("idTeamVisitor", idTeam).list();
+        matchesAsLocal.addAll(matchesAsVisitor);
+        return matchesAsLocal;
+    }
+
+    @Override
     public List<Match> findByCompeticion(String idCompeticion) {
         Query<Match> query = ofy().load().type(Match.class)
                 .filter("idGroup", idCompeticion)
                 .order("numWeek")
                 .order("numMatch");
         return query.list();
+    }
+
+    @Override
+    public List<Match> findMatchesPagination(int page) {
+        int from = page * DeportesMadridConstants.PAGINATION_RECORDS;
+        return ofy().load().type(Match.class).limit(DeportesMadridConstants.PAGINATION_RECORDS).offset(from).list();
     }
 }

@@ -8,6 +8,10 @@ public class DeportesMadridConstants {
     public static final String DESCANSA = "DESCANSA";
     public static final String BUCKET_CLASSIFICATION = "deportes_madrid_classification";
     public static final String BUCKET_MATCHES= "deportes_madrid_matches";
+    public static final String PATH_ENQUE_TASK = "/releases/createReleaseTask";
+    public static final Integer PAGINATION_RECORDS = 500;
+    public static final String CACHE_TEAMS_LIST = "TEAMS_LIST";
+    public static final String CACHE_GROUPS_LIST = "GROUPS_LIST";
 
     public enum MATCH_STATE {
         PENDIENTE(0, "Pendiente"),

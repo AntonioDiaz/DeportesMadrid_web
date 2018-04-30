@@ -8,4 +8,5 @@ import java.util.List;
 public interface TeamDAO extends GenericDAO<Team, Long> {
     List<Team> findByName(String name);
     void insertList(Collection<Team> teamList);
+    List<Team> findTeamsPagination(int page);
 }

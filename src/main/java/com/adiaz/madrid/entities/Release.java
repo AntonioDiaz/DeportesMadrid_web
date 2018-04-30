@@ -18,6 +18,7 @@ public class Release {
 
     String dateStrMatches;
     String dateStrClassification;
+    Date taskEnqued;
     Date taskStart;
     Date taskEnd;
 
@@ -36,6 +37,7 @@ public class Release {
     Boolean updatedGroups;
     Boolean updatedMatches;
     Boolean updatedClassification;
+    Boolean updatedTeamsGroups;
 
     Integer linesTeams;
     Integer linesTeamsErrors;
@@ -47,5 +49,7 @@ public class Release {
     Integer linesMatchesErrors;
     Integer linesClassification;
     Integer linesClassificationErrors;
+    Integer linesTeamsGroups;
+    Integer linesTeamsGroupsErrors;
 
 }

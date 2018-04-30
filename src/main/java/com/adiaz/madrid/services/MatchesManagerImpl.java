@@ -33,10 +33,10 @@ public class MatchesManagerImpl implements MatchesManager {
 
     @Override
     public List<Match> findMatchesByIdGroup(String idGroup) {
-        Group competition = groupDAO.findById(idGroup);
+        Group group = groupDAO.findById(idGroup);
         List<Match> matchList = matchDAO.findByCompeticion(idGroup);
         for (Match match : matchList) {
-            match.setCompetition(competition);
+            match.setGroup(group);
             match.setTeamLocal(teamDAO.findById(match.getIdTeamLocal()));
             match.setTeamVisitor(teamDAO.findById(match.getIdTeamVisitor()));
             match.setPlace(placeDAO.findById(match.getIdPlace()));

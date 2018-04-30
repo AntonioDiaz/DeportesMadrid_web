@@ -30,7 +30,7 @@ public class Match {
 
     @Ignore
     @JsonIgnore
-    private Group competition;
+    private Group group;
 
     @Ignore
     private Team teamLocal;

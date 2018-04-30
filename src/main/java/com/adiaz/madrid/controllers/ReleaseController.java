@@ -64,8 +64,7 @@ public class ReleaseController {
     @ResponseBody
     public String enqueueTask() throws Exception {
         try {
-            Queue queue = QueueFactory.getDefaultQueue();
-            queue.add(TaskOptions.Builder.withUrl("/releases/createReleaseTask"));
+            releaseManager.enqueTaskAll();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return ERROR;
@@ -93,4 +92,78 @@ public class ReleaseController {
         releaseManager.removeRelease(id);
         return "redirect:/releases/release_list?delete_done=true";
     }
+
+    @RequestMapping(value = "/enqueueTaskTeams", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskTeams() throws Exception {
+        try {
+            releaseManager.enqueTaskTeams();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/enqueueTaskPlaces", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskPlaces() throws Exception {
+        try {
+            releaseManager.enqueTaskPlaces();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/enqueueTaskGroups", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskGroups() throws Exception {
+        try {
+            releaseManager.enqueTaskGroups();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/enqueueTaskMatches", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskMatches() throws Exception {
+        try {
+            releaseManager.enqueTaskMatches();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+    @RequestMapping(value = "/enqueueTaskClassification", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskClassification() throws Exception {
+        try {
+            releaseManager.enqueTaskClassification();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
+
+    @RequestMapping(value = "/enqueueTaskEntities", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String enqueueTaskEntities() throws Exception {
+        try {
+            releaseManager.enqueTaskEntities();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ERROR;
+        }
+        return DONE;
+    }
+
 }

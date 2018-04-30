@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode
-@Cache
 public class Place {
 
     @Id

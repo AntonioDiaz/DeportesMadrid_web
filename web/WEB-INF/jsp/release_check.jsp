@@ -12,7 +12,13 @@
         peticionJqueryAjax("enqueueTask", {});
     }
 
+    function fEnqueueTaskCategory(taskType){
+        switchLoading(true);
+        peticionJqueryAjax(taskType, {});
+    }
+
     function peticionJqueryAjax (url, params) {
+        console.log("asking url " + url);
         $.ajax({
             dataType: "text",
             url: url,
@@ -27,7 +33,6 @@
             showDialogAlert("error resultado: " + textStatus);
         });
     }
-
 
 </script>
 <div id="contentDiv">
@@ -54,6 +59,15 @@
                 </c:if>
             </div>
         </div>
+        <c:if test="${last_release.taskEnd != null}">
+            <br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskTeams');">Actualizar equipos</a><br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskPlaces');">Actualizar pistas</a><br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskGroups');">Actualizar grupos</a><br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskMatches');">Actualizar partidos</a><br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskClassification');">Actualizar clasificación</a><br>
+            <a href="javascript:fEnqueueTaskCategory('enqueueTaskEntities');">Actualizar entidades</a><br>
+        </c:if>
     </c:if>
     <c:if test="${last_release==null}">
         No hay last_release

@@ -6,6 +6,13 @@ import com.adiaz.madrid.utils.entities.ClassificationLineEntity;
 import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.adiaz.madrid.utils.DeportesMadridUtils;
 import com.adiaz.madrid.utils.entities.MatchLineEntity;
+import com.google.appengine.api.memcache.ErrorHandlers;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.RetryOptions;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.tools.cloudstorage.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +28,7 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
 
 @Service ("ReleaseManager")
 public class ReleaseManagerImpl implements ReleaseManager {
@@ -60,6 +68,9 @@ public class ReleaseManagerImpl implements ReleaseManager {
     @Autowired
     ReleaseDAO releaseDAO;
 
+    @Autowired
+    TeamManager teamManager;
+
     @Override
     public List<Release> queryAllRelease() {
         return releaseDAO.findAll();
@@ -89,9 +100,13 @@ public class ReleaseManagerImpl implements ReleaseManager {
             if (release.getLinesTeams()<=linesCount) {
                 try {
                     MatchLineEntity lineEntity = new MatchLineEntity(line);
-                    Team team = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
-                    if (team != null) {
-                        teamsMap.put(team.getId(), team);
+                    Team teamLocal = addOrUpdateTeam(lineEntity.getField06_codEquipoLocal(), lineEntity.getField22_equipoLocal());
+                    if (teamLocal != null) {
+                        teamsMap.put(teamLocal.getId(), teamLocal);
+                    }
+                    Team teamVisitor = addOrUpdateTeam(lineEntity.getField07_codEquipoVisitante(), lineEntity.getField23_equipoVisitante());
+                    if (teamVisitor != null) {
+                        teamsMap.put(teamVisitor.getId(), teamVisitor);
                     }
                 } catch (Exception e) {
                     release.setLinesTeamsErrors(release.getLinesTeamsErrors() + 1);
@@ -344,7 +359,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     logger.error("updateClassifications ->" + e.getMessage() + " in line:" + line);
                 }
                 if (linesCount%INSERT_BLOCK_SIZE == 0) {
-                    logger.debug("1. updateclassifications saving places " + classificationEntryMap.size());
+                    logger.debug("1. updateclassifications saving entities " + classificationEntryMap.size());
                     classificationDAO.insertList(classificationEntryMap.values());
                     classificationEntryMap = new HashMap<>();
                     release.setLinesClassification(linesCount);
@@ -354,12 +369,137 @@ public class ReleaseManagerImpl implements ReleaseManager {
             }
         }
         scanner.close();
-        logger.debug("2. updateclassifications saving places " + classificationEntryMap.size());
+        logger.debug("2. updateclassifications saving entities " + classificationEntryMap.size());
         classificationDAO.insertList(classificationEntryMap.values());
         release.setLinesClassification(linesCount);
         release.setUpdatedClassification(true);
         releaseDAO.update(release);
         logger.debug("2. updateclassifications --> " + linesCount );
+    }
+
+    @Override
+    public void updateTeamsGroups(String idRelease) throws Exception {
+        Release release = releaseDAO.findById(idRelease);
+        Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
+        scanner.nextLine();
+        int linesCount = 1;
+        Map<Long, Team> map = new HashMap<>();
+        while (scanner.hasNextLine()) {
+            linesCount++;
+            String line = scanner.nextLine();
+            if (release.getLinesTeamsGroups() <= linesCount) {
+                try {
+                    MatchLineEntity lineEntity = new MatchLineEntity(line);
+                    Integer codTemporada = lineEntity.getField00_codTemporada();
+                    String codCompeticion = lineEntity.getField01_codCompeticion();
+                    Integer codFase = lineEntity.getField02_codFase();
+                    Integer codGrupo = lineEntity.getField03_codGrupo();
+                    Long teamId = lineEntity.getField06_codEquipoLocal();
+                    if (teamId!=null && teamId!=0) {
+                        String idGroup = DeportesMadridUtils.generateIdGroup(codTemporada, codCompeticion, codFase, codGrupo);
+                        Team teamLocal = teamDAO.findById(teamId);
+                        if (teamLocal!=null && !map.containsKey(teamLocal.getId()) && !teamLocal.getGroups().contains(idGroup)) {
+                            teamLocal.getGroups().add(idGroup);
+                            map.put(teamLocal.getId(), teamLocal);
+                        }
+                    }
+                } catch (Exception e) {
+                    release.setLinesTeamsGroupsErrors(release.getLinesTeamsGroupsErrors() + 1);
+                    releaseDAO.update(release);
+                    logger.error("updateTeamsGroups ->" + e.getMessage() + " in line:" + line);
+                }
+                if (linesCount%INSERT_BLOCK_SIZE == 0) {
+                    logger.debug("1. updateTeamsGroups saving entities " + map.size());
+                    teamDAO.insertList(map.values());
+                    map = new HashMap<>();
+                    release.setLinesTeamsGroups(linesCount);
+                    releaseDAO.update(release);
+                    logger.debug("1. updateTeamsGroups --> " + linesCount );
+                }
+            }
+        }
+        scanner.close();
+        logger.debug("2. updateTeamsGroups saving entities " + map.size());
+        teamDAO.insertList(map.values());
+        release.setLinesTeamsGroups(linesCount);
+        release.setUpdatedTeamsGroups(true);
+        releaseDAO.update(release);
+        logger.debug("2. updateTeamsGroups --> " + linesCount );
+
+    }
+
+    @Override
+    public void enqueTaskAll() throws Exception {
+        Release release = queryLastRelease();
+        release.setTaskEnqued(new Date());
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    private void enqueDefaultTask() {
+        Queue queue = QueueFactory.getDefaultQueue();
+        RetryOptions retryOptions = RetryOptions.Builder.withTaskRetryLimit(10);
+        queue.add(TaskOptions.Builder.withUrl(DeportesMadridConstants.PATH_ENQUE_TASK).retryOptions(retryOptions));
+    }
+
+    @Override
+    public void enqueTaskPlaces() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedPlaces(false);
+        release.setLinesPlaces(0);
+        release.setLinesPlacesErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    @Override
+    public void enqueTaskTeams() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedTeams(false);
+        release.setLinesTeams(0);
+        release.setLinesTeamsErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    @Override
+    public void enqueTaskGroups() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedGroups(false);
+        release.setLinesGroups(0);
+        release.setLinesGroupsErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    @Override
+    public void enqueTaskMatches() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedMatches(false);
+        release.setLinesMatches(0);
+        release.setLinesMatchesErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    @Override
+    public void enqueTaskClassification() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedClassification(false);
+        release.setLinesClassification(0);
+        release.setLinesClassificationErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
+    }
+
+    @Override
+    public void enqueTaskEntities() throws Exception {
+        Release release = queryLastRelease();
+        release.setUpdatedTeamsGroups(false);
+        release.setLinesTeamsGroups(0);
+        release.setLinesTeamsGroupsErrors(0);
+        releaseDAO.update(release);
+        enqueDefaultTask();
     }
 
 
@@ -383,9 +523,14 @@ public class ReleaseManagerImpl implements ReleaseManager {
         if (!release.getUpdatedClassification()) {
             updateClassifications(release.getId());
         }
+        if (!release.getUpdatedTeamsGroups()) {
+            updateTeamsGroups(release.getId());
+        }
         release.setTaskEnd(new Date());
         releaseDAO.update(release);
-
+        MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+        syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+        syncCache.clearAll();
     }
 
     public static final String calculateMd5FromBucket(String bucket, String releaseId) throws IOException {
@@ -446,13 +591,13 @@ public class ReleaseManagerImpl implements ReleaseManager {
         return linesCount;
     }
 
-    private Team addOrUpdateTeam(Long idTeam, String nameTeam) throws Exception {
-        if (idTeam!=null && idTeam!=0 && StringUtils.isNotBlank(nameTeam)) {
+    private Team addOrUpdateTeam(Long teamId, String teamName) throws Exception {
+        if (teamId!=null && teamId!=0 && StringUtils.isNotBlank(teamName)) {
             Team teamNew = new Team();
-            teamNew.setId(idTeam);
-            teamNew.setName(nameTeam);
-            Team teamOriginal = teamDAO.findById(idTeam);
-            if (teamOriginal==null || !teamOriginal.equals(teamNew)) {
+            teamNew.setId(teamId);
+            teamNew.setName(teamName);
+            Team teamOriginal = teamDAO.findById(teamId);
+            if (teamOriginal==null || !teamOriginal.getName().equals(teamNew.getName())) {
                 return teamNew;
             }
         }
@@ -477,6 +622,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setUpdatedMatches(false);
         release.setUpdatedGroups(false);
         release.setUpdatedClassification(false);
+        release.setUpdatedTeamsGroups(false);
         release.setLinesFileMatches(countLines(dateStr, DeportesMadridConstants.BUCKET_MATCHES));
         release.setLinesFileClassifications(countLines(dateStr, DeportesMadridConstants.BUCKET_CLASSIFICATION));
         release.setLinesTeams(0);
@@ -484,11 +630,13 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setLinesGroups(0);
         release.setLinesMatches(0);
         release.setLinesClassification(0);
+        release.setLinesTeamsGroups(0);
         release.setLinesTeamsErrors(0);
         release.setLinesPlacesErrors(0);
         release.setLinesGroupsErrors(0);
         release.setLinesMatchesErrors(0);
         release.setLinesClassificationErrors(0);
+        release.setLinesTeamsGroupsErrors(0);
         releaseDAO.create(release);
     }
 

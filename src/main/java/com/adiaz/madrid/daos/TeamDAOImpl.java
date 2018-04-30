@@ -1,6 +1,7 @@
 package com.adiaz.madrid.daos;
 
 import com.adiaz.madrid.entities.Team;
+import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.googlecode.objectify.Key;
 import org.springframework.stereotype.Repository;
 
@@ -63,5 +64,11 @@ public class TeamDAOImpl implements TeamDAO {
     @Override
     public void insertList(Collection<Team> teamList) {
         ofy().save().entities(teamList);
+    }
+
+    @Override
+    public List<Team> findTeamsPagination(int page) {
+        int from = page * DeportesMadridConstants.PAGINATION_RECORDS;
+        return ofy().load().type(Team.class).limit(DeportesMadridConstants.PAGINATION_RECORDS).offset(from).list();
     }
 }

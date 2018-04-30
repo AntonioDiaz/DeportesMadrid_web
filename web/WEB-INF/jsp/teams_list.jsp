@@ -11,7 +11,7 @@
         if ($("#teamName").val().length >= 3) {
             switchLoading(true);
             var params = {team_name: $("#teamName").val()};
-            peticionJqueryAjax("search", params);
+            peticionJqueryAjax("/server/findTeam", params);
         } else {
             showDialogAlert("Son necesarios 3 caracteres para buscar.");
         }
@@ -29,8 +29,19 @@
             $("#results_count").text(data.length);
             $("#result_list").empty();
             $("#result_list").append("<hr>");
-            data.forEach(element => {
-                $("#result_list").append($('<div>', {class: 'col-sm-3', html:element.id + " - " + element.name}))
+            let resultList = $("#result_list").append("<ul class=\"list-group\">");
+            data.forEach(myTeam => {
+                let divRow = $('<div/>', {class: 'row'});
+                divRow.append ($('<div>', {class: 'col-sm-1', html:myTeam.id}));
+                divRow.append($('<div>', {class: 'col-sm-3', html:myTeam.name}));
+                let groupsStr = "";
+                myTeam.groups.forEach(myGroup => {
+                    groupsStr += groupsStr!="" ? " - " : "";
+                    groupsStr += myGroup;
+                });
+                groupsStr = "[" + groupsStr + "]";
+                divRow.append($('<div>', {class: 'col-sm-8', html:groupsStr}));
+                resultList.append($('<li>', {class: 'list-group-item', html:divRow}));
             });
             switchLoading(false);
         }).fail((jqXHR, textStatus, errorThrown) => {

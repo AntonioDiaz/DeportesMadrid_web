@@ -20,6 +20,8 @@ public interface ReleaseManager {
     void updateMatches(String idRelease) throws Exception;
 
     void updateClassifications(String idRelease) throws Exception;
+    void updateTeamsGroups(String idRelease) throws Exception;
+
 
     void createRelease() throws Exception;
 
@@ -28,4 +30,13 @@ public interface ReleaseManager {
     void removeRelease(String id) throws Exception;
 
     void updateDataStore() throws Exception;
+
+    void enqueTaskAll() throws Exception;
+
+    void enqueTaskPlaces() throws Exception;
+    void enqueTaskTeams() throws Exception;
+    void enqueTaskGroups() throws Exception;
+    void enqueTaskMatches() throws Exception;
+    void enqueTaskClassification() throws Exception;
+    void enqueTaskEntities() throws Exception;
 }

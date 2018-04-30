@@ -3,12 +3,18 @@ package com.adiaz.madrid.services;
 
 import com.adiaz.madrid.daos.GroupDAO;
 import com.adiaz.madrid.entities.Group;
+import com.adiaz.madrid.entities.Team;
+import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.adiaz.madrid.utils.entities.SportsCountEntity;
+import com.google.appengine.api.memcache.ErrorHandlers;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @Service ("GroupManager")
 public class GroupManagerImpl implements GroupManager {
@@ -18,18 +24,26 @@ public class GroupManagerImpl implements GroupManager {
 
     @Override
     public Integer countGroups() {
-        return groupDAO.findAll().size();
+        return findAllGroups().size();
     }
 
     @Override
     public List<Group> findAllGroups() {
-        return groupDAO.findAll();
+        List<Group> groups;
+        MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+        syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
+        groups = (List<Group>) syncCache.get(DeportesMadridConstants.CACHE_GROUPS_LIST);
+        if (groups==null) {
+            groups = groupDAO.findAll();
+            syncCache.put(DeportesMadridConstants.CACHE_GROUPS_LIST, groups);
+        }
+        return groups;
     }
 
     @Override
     public List<Group> findGroups(String groupName) {
         List<Group> groupList = new ArrayList<>();
-        for (Group group : groupDAO.findAll()) {
+        for (Group group : findAllGroups()) {
             if (group.getNombreGrupo().contains(groupName)) {
                 groupList.add(group);
             }
@@ -46,8 +60,8 @@ public class GroupManagerImpl implements GroupManager {
     public List<Integer> distinctTemporadas() {
         List<Integer> temporadasList = new ArrayList<>();
         List<Group> groupList = groupDAO.distinctGroupsTemporada();
-        for (Group competition : groupList) {
-            temporadasList.add(competition.getCodTemporada());
+        for (Group group : groupList) {
+            temporadasList.add(group.getCodTemporada());
         }
         return temporadasList;
     }
@@ -70,8 +84,8 @@ public class GroupManagerImpl implements GroupManager {
     @Override
     public List<String> distinctSports() {
         List <String> sportsList = new ArrayList<>();
-        for (Group competition : groupDAO.distinctSports()) {
-            sportsList.add(competition.getDeporte());
+        for (Group group : groupDAO.distinctSports()) {
+            sportsList.add(group.getDeporte());
         }
         return sportsList;
     }
@@ -79,9 +93,9 @@ public class GroupManagerImpl implements GroupManager {
     @Override
     public List<String> distinctDistritos(String sport) {
         List<String> distritosList = new ArrayList<>();
-        List<Group> competitionList = groupDAO.distinctDistritos(sport);
-        for (Group competition : competitionList) {
-            distritosList.add(competition.getDistrito());
+        List<Group> groupList = groupDAO.distinctDistritos(sport);
+        for (Group group : groupList) {
+            distritosList.add(group.getDistrito());
         }
         return distritosList;
     }
