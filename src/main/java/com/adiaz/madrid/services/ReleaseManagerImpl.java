@@ -425,7 +425,6 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setUpdatedTeamsGroups(true);
         releaseDAO.update(release);
         logger.debug("2. updateTeamsGroups --> " + linesCount );
-
     }
 
     @Override
