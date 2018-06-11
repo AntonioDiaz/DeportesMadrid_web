@@ -1,7 +1,7 @@
 <script>
     $(document).ready(function () { });
 
-    function fSearchPlace(){
+    function fSearchPlaceOld(){
         if ($("#placeName").val().length >= 3) {
             switchLoading(true);
             var params = {place_name: $("#placeName").val()};
@@ -9,6 +9,12 @@
         } else {
             showDialogAlert("Son necesarios 3 caracteres para buscar.");
         }
+    }
+
+    function fSearchPlace(){
+        switchLoading(true);
+        var params = {place_name: $("#placeName").val()};
+        peticionJqueryAjax("search", params);
     }
 
     function peticionJqueryAjax (url, params) {

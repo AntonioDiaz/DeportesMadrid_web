@@ -6,12 +6,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DeportesMadridUtils {
+
+    private static final String DATE_ZONE_MADRID = "Europe/Madrid";
 
     public static String getLastReleasePublishedUrl(String url) throws Exception {
         HttpURLConnection con = (HttpURLConnection) (new URL(url).openConnection());
@@ -89,11 +93,13 @@ public class DeportesMadridUtils {
      */
     public static Date stringToDate(String dateStr) throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        df.setTimeZone(TimeZone.getTimeZone(DATE_ZONE_MADRID));
         return df.parse(dateStr);
     }
 
     public static String dateToString(Date date) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        df.setTimeZone(TimeZone.getTimeZone(DATE_ZONE_MADRID));
         return df.format(date);
     }
 }
