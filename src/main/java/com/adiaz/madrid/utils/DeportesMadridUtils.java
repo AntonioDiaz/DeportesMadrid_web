@@ -102,4 +102,9 @@ public class DeportesMadridUtils {
         df.setTimeZone(TimeZone.getTimeZone(DATE_ZONE_MADRID));
         return df.format(date);
     }
+
+    public static long sendNotificationToFirebase() {
+        return -1;
+    }
+
 }
