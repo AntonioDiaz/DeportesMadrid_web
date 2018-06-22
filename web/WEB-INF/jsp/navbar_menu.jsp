@@ -18,6 +18,11 @@
                     <li><a href="/matches/list">Partidos</a></li>
                 </ul>
             </li>
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Administración<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/parameters/list">Parámetros</a></li>
+                </ul>
+            </li>
         </sec:authorize>
     </ul>
     <ul class="nav navbar-nav navbar-right">

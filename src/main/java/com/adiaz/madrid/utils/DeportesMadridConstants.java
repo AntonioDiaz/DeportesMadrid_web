@@ -12,6 +12,8 @@ public class DeportesMadridConstants {
     public static final Integer PAGINATION_RECORDS = 500;
     public static final String CACHE_TEAMS_LIST = "TEAMS_LIST";
     public static final String CACHE_GROUPS_LIST = "GROUPS_LIST";
+    public static final String PARAMETER_FCM_SERVER_KEY = "PARAMETER_FCM_SERVER_KEY";
+    public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
 
     public enum MATCH_STATE {
         PENDIENTE(0, "Pendiente"),

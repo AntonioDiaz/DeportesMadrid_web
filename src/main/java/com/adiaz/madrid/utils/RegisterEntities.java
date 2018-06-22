@@ -23,6 +23,7 @@ public class RegisterEntities {
         ObjectifyService.register(Group.class);
         ObjectifyService.register(Match.class);
         ObjectifyService.register(ClassificationEntry.class);
+        ObjectifyService.register(Parameter.class);
 
         /* clean DB. */
         /*
