@@ -94,4 +94,9 @@
         <put-attribute name="page_title" value="Modificar Parámetro" />
         <put-attribute name="body" value="/WEB-INF/jsp/parameters_update.jsp" />
     </definition>
+
+    <definition name="notification_send" extends="homeTemplate">
+        <put-attribute name="page_title" value="Enviar Notificación a todos los dispositivos" />
+        <put-attribute name="body" value="/WEB-INF/jsp/notification_send.jsp" />
+    </definition>
 </tiles-definitions>

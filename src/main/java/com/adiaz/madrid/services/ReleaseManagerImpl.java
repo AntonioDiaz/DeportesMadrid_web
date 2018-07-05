@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -70,6 +71,31 @@ public class ReleaseManagerImpl implements ReleaseManager {
 
     @Autowired
     TeamManager teamManager;
+
+    @Autowired
+    ParametersManager parametersManager;
+
+    private String getUrlMatches(){
+        String urlMatches = DeportesMadridConstants.URL_MATCHES;
+        Parameter parameter = parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG);
+        if (parameter!=null) {
+            if (new Boolean(parameter.getValue())) {
+                urlMatches = DeportesMadridConstants.URL_MATCHES_FAKE;
+            }
+        }
+        return urlMatches;
+    }
+
+    private String getUrlClassification(){
+        String urlClassification = DeportesMadridConstants.URL_CLASSIFICATION;
+        Parameter parameter = parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG);
+        if (parameter!=null) {
+            if (new Boolean(parameter.getValue())) {
+                urlClassification = DeportesMadridConstants.URL_CLASSIFICATION_FAKE;
+            }
+        }
+        return urlClassification;
+    }
 
     @Override
     public List<Release> queryAllRelease() {
@@ -240,7 +266,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
     }
 
     @Override
-    public void updateMatches(String idRelease) throws Exception {
+    public Set<String> updateMatches(String idRelease) throws Exception {
+        Set<String> teamsUpdated = new HashSet<>();
         Release release = releaseDAO.findById(idRelease);
         Scanner scanner = getScanner(idRelease, DeportesMadridConstants.BUCKET_MATCHES);
         scanner.nextLine();
@@ -278,6 +305,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
                     Match matchOriginal = matchDAO.findById(idMatch);
                     if (matchOriginal==null || !matchOriginal.equals(match)) {
                         matchMap.put(match.getId(), match);
+                        teamsUpdated.add(match.getIdTeamLocal() + DeportesMadridConstants.GROUPS_UPDATED_SEPARATOR + idGroup);
+                        teamsUpdated.add(match.getIdTeamVisitor() + DeportesMadridConstants.GROUPS_UPDATED_SEPARATOR + idGroup);
                     }
                 } catch (Exception e) {
                     release.setLinesMatchesErrors(release.getLinesMatchesErrors() + 1);
@@ -301,7 +330,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
         release.setUpdatedMatches(true);
         releaseDAO.update(release);
         logger.debug("2. last update matches --> " + linesCount );
-
+        return teamsUpdated;
     }
 
     private Integer calculateState(MatchLineEntity matchLineEntity) {
@@ -507,6 +536,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
         Release release = queryLastRelease();
         release.setTaskStart(new Date());
         releaseDAO.update(release);
+        Set<String> teamsUpdated = new HashSet<>();
         if (!release.getUpdatedTeams()) {
             updateTeams(release.getId());
         }
@@ -517,7 +547,7 @@ public class ReleaseManagerImpl implements ReleaseManager {
             updateGroups(release.getId());
         }
         if (!release.getUpdatedMatches()) {
-            updateMatches(release.getId());
+            teamsUpdated =  updateMatches(release.getId());
         }
         if (!release.getUpdatedClassification()) {
             updateClassifications(release.getId());
@@ -525,6 +555,8 @@ public class ReleaseManagerImpl implements ReleaseManager {
         if (!release.getUpdatedTeamsGroups()) {
             updateTeamsGroups(release.getId());
         }
+        String fcmKeyServer = parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_FCM_SERVER_KEY).getValue();
+        long code = DeportesMadridUtils.sendNotificationToFirebase(fcmKeyServer, teamsUpdated);
         release.setTaskEnd(new Date());
         releaseDAO.update(release);
         MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
@@ -608,12 +640,12 @@ public class ReleaseManagerImpl implements ReleaseManager {
         Release release = new Release();
         String dateStr = DeportesMadridUtils.dateToString(new Date());
         release.setId(dateStr);
-        release.setPublishUrlMatches(DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_MATCHES));
-        release.setPublishUrlClassifications(DeportesMadridUtils.getLastReleasePublishedUrl(DeportesMadridConstants.URL_CLASSIFICATION));
-        release.setDateStrMatches(DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_MATCHES));
-        release.setDateStrClassification(DeportesMadridUtils.getLastReleasePublished(DeportesMadridConstants.URL_CLASSIFICATION));
-        copyObjectInBucket(DeportesMadridConstants.URL_MATCHES, DeportesMadridConstants.BUCKET_MATCHES, dateStr + ".csv");
-        copyObjectInBucket(DeportesMadridConstants.URL_CLASSIFICATION, DeportesMadridConstants.BUCKET_CLASSIFICATION, dateStr + ".csv");
+        release.setPublishUrlMatches(DeportesMadridUtils.getLastReleasePublishedUrl(getUrlMatches()));
+        release.setPublishUrlClassifications(DeportesMadridUtils.getLastReleasePublishedUrl(getUrlClassification()));
+        release.setDateStrMatches(DeportesMadridUtils.getLastReleasePublished(getUrlMatches()));
+        release.setDateStrClassification(DeportesMadridUtils.getLastReleasePublished(getUrlClassification()));
+        copyObjectInBucket(getUrlMatches(), DeportesMadridConstants.BUCKET_MATCHES, dateStr + ".csv");
+        copyObjectInBucket(getUrlClassification(), DeportesMadridConstants.BUCKET_CLASSIFICATION, dateStr + ".csv");
         release.setMd5Matches(calculateMd5FromBucket(DeportesMadridConstants.BUCKET_MATCHES, dateStr));
         release.setMd5Classifications(calculateMd5FromBucket(DeportesMadridConstants.BUCKET_CLASSIFICATION, dateStr));
         release.setUpdatedTeams(false);
@@ -641,11 +673,11 @@ public class ReleaseManagerImpl implements ReleaseManager {
 
     @Override
     public boolean publishedUpdates(Release release) throws IOException {
-        String md5Classification = calculateMd5FromUrl(DeportesMadridConstants.URL_CLASSIFICATION);
+        String md5Classification = calculateMd5FromUrl(getUrlClassification());
         if (!md5Classification.equals(release.getMd5Classifications())) {
             return true;
         } else {
-            String md5Matches = calculateMd5FromUrl(DeportesMadridConstants.URL_MATCHES);
+            String md5Matches = calculateMd5FromUrl(getUrlMatches());
             if (!md5Matches.equals(release.getMd5Matches())) {
                 return true;
             }

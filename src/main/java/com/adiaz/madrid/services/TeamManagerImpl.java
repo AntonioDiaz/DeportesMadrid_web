@@ -9,6 +9,7 @@ import com.adiaz.madrid.utils.DeportesMadridConstants;
 import com.google.appengine.api.memcache.ErrorHandlers;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,8 +42,11 @@ public class TeamManagerImpl implements TeamManager {
     @Override
     public List<Team> findTeams(String teamName) {
         List<Team> teams = new ArrayList<>();
+        String teamNameNormalized = teamName.replace("Ñ", "\001");
+        teamNameNormalized = StringUtils.stripAccents(teamNameNormalized);
+        teamNameNormalized = teamNameNormalized.replace("\001", "Ñ");
         for (Team team : findAll()) {
-            if (team.getName().contains(teamName)) {
+            if (team.getName().contains(teamName) || team.getName().contains(teamNameNormalized)) {
                 teams.add(team);
             }
         }

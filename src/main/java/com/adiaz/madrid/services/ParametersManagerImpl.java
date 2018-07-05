@@ -31,6 +31,12 @@ public class ParametersManagerImpl implements ParametersManager {
     }
 
     @Override
+    public Parameter queryByKey(String key) {
+        List<Parameter> parameterList = parametersDAO.findByKey(key);
+        return parameterList.size()==0?null:parameterList.get(0);
+    }
+
+    @Override
     public Parameter queryById(Long id) {
         return parametersDAO.findById(id);
     }

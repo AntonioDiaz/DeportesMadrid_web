@@ -1,10 +1,10 @@
 package com.adiaz.madrid.controllers;
 
 import com.adiaz.madrid.entities.Release;
+import com.adiaz.madrid.services.ParametersManager;
 import com.adiaz.madrid.services.ReleaseManager;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
+import com.adiaz.madrid.utils.DeportesMadridConstants;
+import com.adiaz.madrid.utils.DeportesMadridUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Controller
@@ -22,11 +24,12 @@ import java.util.Date;
 public class ReleaseController {
 
     public static final Logger logger = Logger.getLogger(ReleaseController.class);
-    public static final String ERROR = "error";
-    public static final String DONE = "done";
 
     @Autowired
     ReleaseManager releaseManager;
+
+    @Autowired
+    ParametersManager parametersManager;
 
     @RequestMapping(value = "/release_list", method = RequestMethod.GET)
     public ModelAndView releaseList(@RequestParam(value = "delete_done", defaultValue = "false") boolean deleteDone) {
@@ -56,7 +59,7 @@ public class ReleaseController {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
     }
 
@@ -67,9 +70,9 @@ public class ReleaseController {
             releaseManager.enqueTaskAll();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
     @RequestMapping(value = "/createReleaseTask", method={RequestMethod.POST, RequestMethod.GET})
@@ -100,9 +103,9 @@ public class ReleaseController {
             releaseManager.enqueTaskTeams();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
     @RequestMapping(value = "/enqueueTaskPlaces", method={RequestMethod.POST, RequestMethod.GET})
@@ -112,9 +115,9 @@ public class ReleaseController {
             releaseManager.enqueTaskPlaces();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
     @RequestMapping(value = "/enqueueTaskGroups", method={RequestMethod.POST, RequestMethod.GET})
@@ -124,9 +127,9 @@ public class ReleaseController {
             releaseManager.enqueTaskGroups();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
     @RequestMapping(value = "/enqueueTaskMatches", method={RequestMethod.POST, RequestMethod.GET})
@@ -136,9 +139,9 @@ public class ReleaseController {
             releaseManager.enqueTaskMatches();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
     @RequestMapping(value = "/enqueueTaskClassification", method={RequestMethod.POST, RequestMethod.GET})
@@ -148,9 +151,9 @@ public class ReleaseController {
             releaseManager.enqueTaskClassification();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
     }
 
 
@@ -161,9 +164,26 @@ public class ReleaseController {
             releaseManager.enqueTaskEntities();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return ERROR;
+            return DeportesMadridConstants.ERROR;
         }
-        return DONE;
+        return DeportesMadridConstants.DONE;
+    }
+
+    @RequestMapping(value = "/sendNotification", method={RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public String sendNotification() throws Exception {
+        try {
+            String fcmKeyServer = parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_FCM_SERVER_KEY).getValue();
+            Set<String> set = new HashSet<>();
+            long code = DeportesMadridUtils.sendNotificationToFirebase(fcmKeyServer, set);
+            if (code == -1) {
+                return DeportesMadridConstants.ERROR;
+            }
+            return DeportesMadridConstants.DONE;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return DeportesMadridConstants.ERROR;
+        }
     }
 
 }

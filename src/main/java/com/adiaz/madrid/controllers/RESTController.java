@@ -95,6 +95,7 @@ public class RESTController {
     @RequestMapping(value = "/findTeam", method = RequestMethod.GET)
     @ResponseBody
     public List<Team> findTeam(@RequestParam(value = "team_name") String teamName) {
+
         return teamManager.findTeams(teamName.toUpperCase());
     }
 

@@ -21,6 +21,7 @@
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Administración<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/parameters/list">Parámetros</a></li>
+                    <li><a href="/notifications/send">Enviar notificación</a></li>
                 </ul>
             </li>
         </sec:authorize>

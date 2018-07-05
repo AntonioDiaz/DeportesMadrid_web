@@ -2,9 +2,11 @@ package com.adiaz.madrid.utils;
 
 import com.adiaz.madrid.daos.GroupDAO;
 import com.adiaz.madrid.entities.*;
+import com.adiaz.madrid.services.ParametersManager;
 import com.googlecode.objectify.ObjectifyService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ParameterMapper;
 
 public class RegisterEntities {
 
@@ -12,6 +14,9 @@ public class RegisterEntities {
 
     @Autowired
     GroupDAO groupDAO;
+
+    @Autowired
+    ParametersManager parametersManager;
 
     public void init() throws Exception {
 
@@ -24,6 +29,7 @@ public class RegisterEntities {
         ObjectifyService.register(Match.class);
         ObjectifyService.register(ClassificationEntry.class);
         ObjectifyService.register(Parameter.class);
+        ObjectifyService.register(Notification.class);
 
         /* clean DB. */
         /*
@@ -50,6 +56,13 @@ public class RegisterEntities {
             ofy().clear();
         }
         */
+        /* insert parameters */
+        if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG)==null) {
+            Parameter parameter = new Parameter();
+            parameter.setKey(DeportesMadridConstants.PARAMETER_DEBUG);
+            parameter.setValue("false");
+            parametersManager.add(parameter);
+        }
         logger.debug("init DataBase finished");
     }
 }

@@ -1,21 +1,34 @@
 package com.adiaz.madrid.utils;
 
 import com.adiaz.madrid.entities.Group;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.appengine.repackaged.com.google.gson.JsonObject;
+import com.google.appengine.repackaged.com.google.gson.JsonParser;
+import com.google.appengine.repackaged.com.google.gson.JsonSyntaxException;
+import com.google.appengine.repackaged.org.json.JSONException;
+import com.google.appengine.repackaged.org.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 public class DeportesMadridUtils {
 
     private static final String DATE_ZONE_MADRID = "Europe/Madrid";
+    private static final Logger logger = Logger.getLogger(DeportesMadridUtils.class.getName());
 
     public static String getLastReleasePublishedUrl(String url) throws Exception {
         HttpURLConnection con = (HttpURLConnection) (new URL(url).openConnection());
@@ -103,8 +116,86 @@ public class DeportesMadridUtils {
         return df.format(date);
     }
 
-    public static long sendNotificationToFirebase() {
-        return -1;
+
+    /**
+     *
+     curl --header "Authorization: key="AAAAbG1pzOw:APA91bGHMxUF_kX8JkXWduKc4suJoiAZL8Vp3WBBuu061Q8aXMTTMQcY_Wic6sFyIlLi80nUO8Wt4t8y1RKZVGjl7vsgOVLksxv0LK9Fr9BysS8wgl0kLf3aKYtmhYf3r2OnihGAMl5exdJEPwJo7dE3Z-k0DuGr4Q" \
+     --header Content-Type:"application/json" \
+     https://gcm-http.googleapis.com/gcm/send \
+     -d "{\"registration_ids\":[\"ABC\"]}"
+
+
+     curl --header "Authorization: key=$server_key" \
+     --header Content-Type:"application/json" \
+     https://gcm-http.googleapis.com/gcm/send \
+     -d "{\"to\":\"/topics/toma\", \"data\":{\"message\":\"this is a gcm topic message\"}}"
+     * @param fcmKeyServer
+     * @return
+     */
+
+    public static long sendNotificationToFirebase(String fcmKeyServer, Set<String> teamsUpdated) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JSONObject jsonData = new JSONObject();
+        JSONObject jsonRoot = new JSONObject();
+        try {
+            String teamsUpdatedStr = teamsUpdated.stream()
+                    .map( n -> n.toString() )
+                    .collect( Collectors.joining( DeportesMadridConstants.TEAMS_UPDATED_SEPARATOR ) );
+            jsonData.put("teams_updated", teamsUpdatedStr);
+            jsonRoot.put("to", "/topics/sync");
+            jsonRoot.put("data", jsonData);
+            return sendNotification(fcmKeyServer, jsonRoot);
+        } catch (IOException | JSONException e) {
+            logger.error("FCM Error on send notification: " + e.getLocalizedMessage(), e);
+            return -1;
+        }
+    }
+
+    public static long sendNotificationInfo(String fcmKeyServer, String title, String body) {
+        JSONObject jsonData = new JSONObject();
+        JSONObject jsonRoot = new JSONObject();
+        try {
+            jsonData.put("title", title);
+            jsonData.put("body", body);
+            jsonRoot.put("to", "/topics/general");
+            jsonRoot.put("data", jsonData);
+            return sendNotification(fcmKeyServer, jsonRoot);
+        } catch (IOException | JSONException e) {
+            logger.error("FCM Error on send notification: " + e.getLocalizedMessage(), e);
+            return -1;
+        }
+    }
+
+    private static long sendNotification(String fcmKeyServer, JSONObject jsonRoot) throws IOException {
+        URL url = new URL(DeportesMadridConstants.FCM_URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json charset=UTF-8");
+        conn.setRequestProperty("Authorization", "key=" + fcmKeyServer);
+        conn.getOutputStream().write(jsonRoot.toString().getBytes());
+        logger.debug("FCM json: " + jsonRoot.toString());
+        OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+        writer.close();
+        logger.debug("FCM respCode: " + conn.getResponseCode());
+        long respCode = -1;
+        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            try {
+                StringBuffer response = new StringBuffer();
+                String line;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                logger.debug("FCM response body: " + response);
+                JsonParser parser = new JsonParser();
+                JsonObject jsonResponse = parser.parse(response.toString()).getAsJsonObject();
+                respCode = jsonResponse.get("message_id").getAsLong();
+            } catch (IOException | JsonSyntaxException e) {
+                logger.error("FCM Error on send notification: " + e.getLocalizedMessage(), e);
+            }
+        }
+        return respCode;
     }
 
 }

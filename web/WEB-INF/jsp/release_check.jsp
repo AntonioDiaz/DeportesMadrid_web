@@ -67,6 +67,7 @@
             <a href="javascript:fEnqueueTaskCategory('enqueueTaskMatches');">Actualizar partidos</a><br>
             <a href="javascript:fEnqueueTaskCategory('enqueueTaskClassification');">Actualizar clasificación</a><br>
             <a href="javascript:fEnqueueTaskCategory('enqueueTaskEntities');">Actualizar entidades</a><br>
+            <a href="javascript:fEnqueueTaskCategory('sendNotification');">Send notification</a><br>
         </c:if>
     </c:if>
     <c:if test="${last_release==null}">

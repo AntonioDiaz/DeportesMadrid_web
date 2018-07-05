@@ -4,6 +4,7 @@ import com.adiaz.madrid.entities.Release;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public interface ReleaseManager {
     
@@ -17,7 +18,7 @@ public interface ReleaseManager {
 
     void updateGroups(String idRelease) throws Exception;
 
-    void updateMatches(String idRelease) throws Exception;
+    Set<String> updateMatches(String idRelease) throws Exception;
 
     void updateClassifications(String idRelease) throws Exception;
     void updateTeamsGroups(String idRelease) throws Exception;
