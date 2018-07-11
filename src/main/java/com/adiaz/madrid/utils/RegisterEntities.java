@@ -1,8 +1,10 @@
 package com.adiaz.madrid.utils;
 
 import com.adiaz.madrid.daos.GroupDAO;
+import com.adiaz.madrid.daos.UsersDAO;
 import com.adiaz.madrid.entities.*;
 import com.adiaz.madrid.services.ParametersManager;
+import com.adiaz.madrid.services.UsersManager;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.QueryKeys;
@@ -22,6 +24,9 @@ public class RegisterEntities {
     GroupDAO groupDAO;
 
     @Autowired
+    UsersManager usersManager;
+
+    @Autowired
     ParametersManager parametersManager;
 
     public void init() throws Exception {
@@ -38,6 +43,7 @@ public class RegisterEntities {
         ObjectifyService.register(Notification.class);
 
         /* clean DB. */
+        /*
         try {
             List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
             ofy().delete().keys(listRelease);
@@ -60,7 +66,7 @@ public class RegisterEntities {
         } finally {
             ofy().clear();
         }
-
+        */
         /* insert parameters */
         if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG)==null) {
             Parameter parameter = new Parameter();
@@ -74,6 +80,30 @@ public class RegisterEntities {
             parameter.setValue("NOT_VALID");
             parametersManager.add(parameter);
         }
+        if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_URL_CLASSIFICATION)==null) {
+            Parameter parameter = new Parameter();
+            parameter.setKey(DeportesMadridConstants.PARAMETER_URL_CLASSIFICATION);
+            parameter.setValue(DeportesMadridConstants.URL_CLASSIFICATION);
+            parametersManager.add(parameter);
+        }
+        if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_URL_MATCHES)==null) {
+            Parameter parameter = new Parameter();
+            parameter.setKey(DeportesMadridConstants.PARAMETER_URL_MATCHES);
+            parameter.setValue(DeportesMadridConstants.URL_MATCHES);
+            parametersManager.add(parameter);
+        }
+        createTestUser();
         logger.debug("init DataBase finished");
+    }
+    private void createTestUser() {
+        try {
+            logger.info("Creating test user.");
+            if (usersManager.queryAllUsers().isEmpty()) {
+                User user = new User("adiaz", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", true, true, false, true);
+                usersManager.addUser(user);
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+        }
     }
 }

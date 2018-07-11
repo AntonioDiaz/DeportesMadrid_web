@@ -40,6 +40,17 @@ public class User implements UserDetails {
 
     private boolean accountNonExpired;
 
+    public User() { }
+
+    public User(String username, String password, boolean admin, boolean enabled, boolean bannedUser, boolean accountNonExpired) {
+        this.username = username;
+        this.password = password;
+        this.admin = admin;
+        this.enabled = enabled;
+        this.bannedUser = bannedUser;
+        this.accountNonExpired = accountNonExpired;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
