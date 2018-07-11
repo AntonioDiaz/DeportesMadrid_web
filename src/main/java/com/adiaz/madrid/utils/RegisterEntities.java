@@ -3,10 +3,16 @@ package com.adiaz.madrid.utils;
 import com.adiaz.madrid.daos.GroupDAO;
 import com.adiaz.madrid.entities.*;
 import com.adiaz.madrid.services.ParametersManager;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.cmd.QueryKeys;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ParameterMapper;
+
+import java.util.List;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class RegisterEntities {
 
@@ -32,7 +38,6 @@ public class RegisterEntities {
         ObjectifyService.register(Notification.class);
 
         /* clean DB. */
-        /*
         try {
             List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
             ofy().delete().keys(listRelease);
@@ -55,12 +60,18 @@ public class RegisterEntities {
         } finally {
             ofy().clear();
         }
-        */
+
         /* insert parameters */
         if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG)==null) {
             Parameter parameter = new Parameter();
             parameter.setKey(DeportesMadridConstants.PARAMETER_DEBUG);
             parameter.setValue("false");
+            parametersManager.add(parameter);
+        }
+        if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_FCM_SERVER_KEY)==null) {
+            Parameter parameter = new Parameter();
+            parameter.setKey(DeportesMadridConstants.PARAMETER_FCM_SERVER_KEY);
+            parameter.setValue("NOT_VALID");
             parametersManager.add(parameter);
         }
         logger.debug("init DataBase finished");

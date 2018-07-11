@@ -18,6 +18,7 @@
     <context:component-scan base-package="com.adiaz.madrid.forms.validators" />
     <context:component-scan base-package="com.adiaz.madrid.forms.utils" />
     <context:component-scan base-package="com.adiaz.madrid.utils" />
+    <context:component-scan base-package="com.adiaz.madrid.utils.updates" />
 
     <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />

@@ -29,6 +29,7 @@
             Nuevo Parámetro &nbsp; &nbsp;<span class="glyphicon glyphicon-plus"></span>
         </button>
     </div>
+</div>
 <hr>
 <div class="row">
     <div class="col-sm-12">
@@ -41,25 +42,25 @@
             </tr>
             </thead>
             <tbody>
-            <c:if test="${empty parameters}">
-                <tr>
-                    <td colspan="10">No hay parametros registradas.</td>
-                </tr>
-            </c:if>
-            <c:forEach var="parameter" items="${parameters}">
-                <tr>
-                    <td style="vertical-align: top;">${parameter.key}</td>
-                    <td style="vertical-align: middle;"><div style="word-break: break-all;">[${parameter.value}]</div></td>
-                    <td align="right">
-                        <button type="button" class="btn btn-default" onclick="fUpdate('${parameter.id}')" title="modificar">
-                            Modificar &nbsp; &nbsp;<span class="glyphicon glyphicon-edit"></span>
-                        </button>
-                        <button type="button" class="btn btn-default" onclick="fDelete('${parameter.id}')" title="eliminar">
-                            Eliminar &nbsp; &nbsp;<span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </td>
-                </tr>
-            </c:forEach>
+                <c:if test="${empty parameters}">
+                    <tr>
+                        <td colspan="10">No hay parametros registradas.</td>
+                    </tr>
+                </c:if>
+                <c:forEach var="parameter" items="${parameters}">
+                    <tr>
+                        <td style="vertical-align: top;">${parameter.key}</td>
+                        <td style="vertical-align: middle;"><div style="word-break: break-all;">[${parameter.value}]</div></td>
+                        <td align="right">
+                            <button type="button" class="btn btn-default" onclick="fUpdate('${parameter.id}')" title="modificar">
+                                Modificar &nbsp; &nbsp;<span class="glyphicon glyphicon-edit"></span>
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="fDelete('${parameter.id}')" title="eliminar">
+                                Eliminar &nbsp; &nbsp;<span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
             </tbody>
         </table>
     </div>

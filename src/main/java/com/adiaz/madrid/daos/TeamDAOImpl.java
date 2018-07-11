@@ -13,8 +13,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 @Repository
 public class TeamDAOImpl implements TeamDAO {
 
-
-
     @Override
     public Key<Team> create(Team item) throws Exception {
         return ofy().save().entity(item).now();

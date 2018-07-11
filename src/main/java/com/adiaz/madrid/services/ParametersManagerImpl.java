@@ -14,7 +14,6 @@ public class ParametersManagerImpl implements ParametersManager {
     @Autowired
     ParametersDAO parametersDAO;
 
-
     @Override
     public List<Parameter> queryParameters() {
         return parametersDAO.findAll();

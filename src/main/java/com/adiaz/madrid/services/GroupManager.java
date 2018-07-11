@@ -9,6 +9,7 @@ public interface GroupManager {
     Integer countGroups();
     List<Group> findAllGroups();
     List<Group> findGroups(String groupName);
+    List<Group> findGroups(Integer codTemporada);
     Group findById(String id);
     List<Integer> distinctTemporadas();
     List<Group> distinctGroups(Integer temporada);

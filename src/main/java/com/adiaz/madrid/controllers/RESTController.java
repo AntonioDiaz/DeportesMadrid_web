@@ -33,7 +33,6 @@ public class RESTController {
     @Autowired
     TeamManager teamManager;
 
-
     private static final Logger logger = Logger.getLogger(RESTController.class);
 
     @RequestMapping(value = "/sports", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,10 +50,14 @@ public class RESTController {
         return groupManager.distinctDistritos(sport);
     }
 
-
     @RequestMapping(value = "/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Group> groups() {
         return groupManager.findAllGroups();
+    }
+
+    @RequestMapping(value = "/groups/{codTemporada}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Group> groups(@PathVariable(value="codTemporada") Integer codTemporada) {
+        return groupManager.findGroups(codTemporada);
     }
 
     @RequestMapping(value = "/findMatches", method = RequestMethod.GET)
@@ -70,7 +73,6 @@ public class RESTController {
         List<ClassificationEntry> classificationEntries = classificationManager.findClassificationByIdGroup(idGroup);
         return classificationEntries;
     }
-
 
     @RequestMapping(value = "/findGroup", method = RequestMethod.GET)
     @ResponseBody
@@ -91,12 +93,10 @@ public class RESTController {
         return teamManager.findAll();
     }
 
-
     @RequestMapping(value = "/findTeam", method = RequestMethod.GET)
     @ResponseBody
-    public List<Team> findTeam(@RequestParam(value = "team_name") String teamName) {
-
+    public List<Team> findTeam(
+            @RequestParam(value = "team_name") String teamName) {
         return teamManager.findTeams(teamName.toUpperCase());
     }
-
 }

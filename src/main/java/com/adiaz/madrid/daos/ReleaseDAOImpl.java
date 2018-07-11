@@ -2,6 +2,8 @@ package com.adiaz.madrid.daos;
 
 import com.adiaz.madrid.entities.Release;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.cmd.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -47,4 +49,5 @@ public class ReleaseDAOImpl implements ReleaseDAO {
     public Release findById(String id) {
         return ofy().load().type(Release.class).id(id).now();
     }
+
 }

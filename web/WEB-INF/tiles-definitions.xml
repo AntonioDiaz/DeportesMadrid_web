@@ -61,7 +61,7 @@
     </definition>
 
     <definition name="places_list" extends="homeTemplate">
-        <put-attribute name="page_title" value="Lista de campos"/>
+        <put-attribute name="page_title" value="Lista de pistas"/>
         <put-attribute name="body" value="/WEB-INF/jsp/places_list.jsp"/>
     </definition>
 

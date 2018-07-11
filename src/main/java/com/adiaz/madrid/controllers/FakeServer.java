@@ -21,12 +21,12 @@ public class FakeServer {
 
     @RequestMapping(value = "/matches.csv", method = RequestMethod.GET)
     public String matches() {
-        return "redirect:/catalogo/Partidos_20180425.csv";
+        return "redirect:/catalogo/Partidos_20170920.csv";
     }
 
     @RequestMapping(value = "/classification.csv", method = RequestMethod.GET)
     public String classification() {
-        return "redirect:/catalogo/clasificaciones_20180425.csv";
+        return "redirect:/catalogo/clasificaciones_20170920.csv";
     }
 
     @RequestMapping(value = "/{file_name:.+}", method = RequestMethod.GET)

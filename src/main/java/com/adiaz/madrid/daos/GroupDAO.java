@@ -22,4 +22,6 @@ public interface GroupDAO extends GenericDAO<Group, String> {
     List<Group> distinctDistritos(String sport);
 
     List<Group> findBySport(String sport);
+
+    List<Group> findByCodTemporada(Integer codTemporada);
 }

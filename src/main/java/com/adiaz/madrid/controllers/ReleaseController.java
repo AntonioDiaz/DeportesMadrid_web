@@ -51,6 +51,7 @@ public class ReleaseController {
     public String checkReleaseAction() throws Exception {
         try {
             Release release = releaseManager.queryLastRelease();
+            /*check if there is something to publish. */
             if (release==null || releaseManager.publishedUpdates(release)) {
                 releaseManager.createRelease();
                 return "Se creo la release.";
@@ -65,9 +66,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTask", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTask() throws Exception {
+    public String enqueueTask(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskAll();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskAll(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -91,16 +93,17 @@ public class ReleaseController {
     }
 
     @RequestMapping(value = "/delete_release", method = RequestMethod.GET)
-    public String deleteRelease(@RequestParam(value = "id_release") String id) throws Exception {
+    public String deleteRelease(@RequestParam(value = "id") String id) throws Exception {
         releaseManager.removeRelease(id);
         return "redirect:/releases/release_list?delete_done=true";
     }
 
     @RequestMapping(value = "/enqueueTaskTeams", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskTeams() throws Exception {
+    public String enqueueTaskTeams(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskTeams();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskTeams(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -110,9 +113,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTaskPlaces", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskPlaces() throws Exception {
+    public String enqueueTaskPlaces(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskPlaces();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskPlaces(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -122,9 +126,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTaskGroups", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskGroups() throws Exception {
+    public String enqueueTaskGroups(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskGroups();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskGroups(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -134,9 +139,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTaskMatches", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskMatches() throws Exception {
+    public String enqueueTaskMatches(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskMatches();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskMatches(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -146,9 +152,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTaskClassification", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskClassification() throws Exception {
+    public String enqueueTaskClassification(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskClassification();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskClassification(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -159,9 +166,10 @@ public class ReleaseController {
 
     @RequestMapping(value = "/enqueueTaskEntities", method={RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public String enqueueTaskEntities() throws Exception {
+    public String enqueueTaskEntities(@RequestParam(value = "id") String id) throws Exception {
         try {
-            releaseManager.enqueTaskEntities();
+            Release release = releaseManager.queryReleaseById(id);
+            releaseManager.enqueTaskEntities(release);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return DeportesMadridConstants.ERROR;
@@ -174,7 +182,7 @@ public class ReleaseController {
     public String sendNotification() throws Exception {
         try {
             String fcmKeyServer = parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_FCM_SERVER_KEY).getValue();
-            Set<String> set = new HashSet<>();
+            Set<String[]> set = new HashSet<>();
             long code = DeportesMadridUtils.sendNotificationToFirebase(fcmKeyServer, set);
             if (code == -1) {
                 return DeportesMadridConstants.ERROR;
@@ -185,5 +193,4 @@ public class ReleaseController {
             return DeportesMadridConstants.ERROR;
         }
     }
-
 }

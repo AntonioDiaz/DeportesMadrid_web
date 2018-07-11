@@ -1,5 +1,6 @@
 package com.adiaz.madrid.utils.entities;
 
+import com.adiaz.madrid.utils.DeportesMadridUtils;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,9 +33,9 @@ public class MatchLineEntity {
         field18_nombreGrupo = split[18].trim();
         field19_nombreDeporte = split[19].trim();
         field20_nombreCategoria = split[20].trim();
-        field22_equipoLocal = split[22].trim();
-        field23_equipoVisitante = split[23].trim();
-        field24_campo = split[24].trim();
+        field22_equipoLocal = DeportesMadridUtils.normalizeName(split[22].trim());
+        field23_equipoVisitante = DeportesMadridUtils.normalizeName(split[23].trim());
+        field24_campo = DeportesMadridUtils.normalizeName(split[24].trim());
         field26_distrito = split[26].trim();
         if (StringUtils.isNotBlank(split[29])) {
             field29_coordx = Long.parseLong(split[29].trim());

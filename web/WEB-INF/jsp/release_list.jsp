@@ -9,7 +9,7 @@
     function fDeleteRelease(idRelease){
         const msgConfirm = "se va a borrar actualización, ¿continuar?";
         showDialogConfirm(msgConfirm, function () {
-            window.location.href = "delete_release?id_release=" + idRelease;
+            window.location.href = "delete_release?id=" + idRelease;
         });
     }
 </script>

@@ -58,14 +58,14 @@
 <div id="contentDiv">
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3" >Número total de campos</label>
+            <label class="control-label col-sm-3" >Número total de pistas</label>
             <div class="col-sm-2"><div class="bg-success text-white">${places_number}</div></div>
         </div>
     </div>
     <br>
     <div class="row">
         <div class="form-group">
-            <label class="control-label col-sm-3" >Nombre de Campo</label>
+            <label class="control-label col-sm-3" >Nombre de la Pista</label>
             <div class="col-sm-6">
                 <input id="placeName" class="form-control"></input>
             </div>

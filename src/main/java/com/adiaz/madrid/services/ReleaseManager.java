@@ -11,18 +11,7 @@ public interface ReleaseManager {
     List<Release> queryAllRelease();
     
     Release queryLastRelease();
-
-    void updateTeams(String idRelease) throws Exception;
-
-    void updatePlaces(String idRelease) throws Exception;
-
-    void updateGroups(String idRelease) throws Exception;
-
-    Set<String> updateMatches(String idRelease) throws Exception;
-
-    void updateClassifications(String idRelease) throws Exception;
-    void updateTeamsGroups(String idRelease) throws Exception;
-
+    Release queryReleaseById(String id);
 
     void createRelease() throws Exception;
 
@@ -30,14 +19,15 @@ public interface ReleaseManager {
 
     void removeRelease(String id) throws Exception;
 
+    void updateDataStore(Release release) throws Exception;
     void updateDataStore() throws Exception;
 
-    void enqueTaskAll() throws Exception;
+    void enqueTaskAll(Release release) throws Exception;
 
-    void enqueTaskPlaces() throws Exception;
-    void enqueTaskTeams() throws Exception;
-    void enqueTaskGroups() throws Exception;
-    void enqueTaskMatches() throws Exception;
-    void enqueTaskClassification() throws Exception;
-    void enqueTaskEntities() throws Exception;
+    void enqueTaskPlaces(Release release) throws Exception;
+    void enqueTaskTeams(Release release) throws Exception;
+    void enqueTaskGroups(Release release) throws Exception;
+    void enqueTaskMatches(Release release) throws Exception;
+    void enqueTaskClassification(Release release) throws Exception;
+    void enqueTaskEntities(Release release) throws Exception;
 }

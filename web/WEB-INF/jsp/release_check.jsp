@@ -1,20 +1,16 @@
 <%@include file="taglibs.jsp" %>
 <script>
-    $(document).ready(function () {});
+    $(document).ready(function () { });
 
     function fCheckRelease() {
         switchLoading(true);
         peticionJqueryAjax("check_release_ajax", {});
     }
 
-    function fBtnTask(){
+    function fEnqueueTask(taskType, idRelease){
         switchLoading(true);
-        peticionJqueryAjax("enqueueTask", {});
-    }
-
-    function fEnqueueTaskCategory(taskType){
-        switchLoading(true);
-        peticionJqueryAjax(taskType, {});
+        let params = {id: idRelease};
+        peticionJqueryAjax(taskType, params);
     }
 
     function peticionJqueryAjax (url, params) {
@@ -37,7 +33,8 @@
 </script>
 <div id="contentDiv">
     <div style="text-align: right">
-        <button type="button" class="btn btn-success" onclick="fCheckRelease()">Comprobar actualización</button>
+        &nbsp;&nbsp;&nbsp;
+        <button type="button" class="btn btn-success" onclick="fCheckRelease()" style="width: 160px">buscar actualización</button>
     </div>
     <hr>
     <c:if test="${last_release!=null}">
@@ -47,8 +44,8 @@
             </div>
             <div class="col-sm-2">
                 <c:if test="${last_release.taskStart==null}">
-                    <button id="btnDelete" type="button" class="btn btn-primary" onclick="fBtnTask()">
-                        <span class="glyphicon glyphicon-tasks"></span>
+                    <button id="btnDelete" type="button" class="btn btn-primary" onclick="fEnqueueTask('enqueueTask', '${last_release.id}')" style="width: 160px">
+                        <span class="glyphicon glyphicon-tasks"></span> lanzar tarea
                     </button>
                 </c:if>
                 <c:if test="${last_release.taskEnd != null}">
@@ -61,13 +58,13 @@
         </div>
         <c:if test="${last_release.taskEnd != null}">
             <br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskTeams');">Actualizar equipos</a><br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskPlaces');">Actualizar pistas</a><br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskGroups');">Actualizar grupos</a><br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskMatches');">Actualizar partidos</a><br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskClassification');">Actualizar clasificación</a><br>
-            <a href="javascript:fEnqueueTaskCategory('enqueueTaskEntities');">Actualizar entidades</a><br>
-            <a href="javascript:fEnqueueTaskCategory('sendNotification');">Send notification</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskTeams', '${last_release.id}');">Actualizar equipos</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskPlaces', '${last_release.id}');">Actualizar pistas</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskGroups', '${last_release.id}');">Actualizar grupos</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskMatches', '${last_release.id}');">Actualizar partidos</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskClassification', '${last_release.id}');">Actualizar clasificación</a><br>
+            <a href="javascript:fEnqueueTask('enqueueTaskEntities', '${last_release.id}');">Actualizar entidades</a><br>
+            <a href="javascript:fEnqueueTask('sendNotification', '${last_release.id}');">Send notification</a><br>
         </c:if>
     </c:if>
     <c:if test="${last_release==null}">

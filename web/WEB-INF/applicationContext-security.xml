@@ -12,6 +12,7 @@
     <context:component-scan base-package="com.adiaz.madrid.forms.utils" />
     <context:component-scan base-package="com.adiaz.madrid.services" />
     <context:component-scan base-package="com.adiaz.madrid.services.security" />
+    <context:component-scan base-package="com.adiaz.madrid.utils.updates" />
     <context:spring-configured />
 
     <http auto-config="true" use-expressions="true">

@@ -52,6 +52,11 @@ public class GroupManagerImpl implements GroupManager {
     }
 
     @Override
+    public List<Group> findGroups(Integer codTemporada) {
+        return groupDAO.findByCodTemporada(codTemporada);
+    }
+
+    @Override
     public Group findById(String id) {
         return groupDAO.findById(id);
     }

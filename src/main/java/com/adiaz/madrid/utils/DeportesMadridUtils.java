@@ -53,7 +53,6 @@ public class DeportesMadridUtils {
 
     public static String normalizeName (String input) {
         String output = input.trim();
-        /*
         output = output.replace((char)0XA5, (char)0XD1); //eñe mayuscula
         output = output.replace((char)0XB5, (char)0XC1); //tile A
         output = output.replace((char)0X90, (char)0XC9); //tile E
@@ -65,7 +64,6 @@ public class DeportesMadridUtils {
         output = output.replace((char)0XA6, (char)0XAA); // ª
         output = output.replace((char)0XA7, (char)0XBA); // º
         output = output.replace((char)0X20AC, (char)0XE7); // ç
-        */
         return output;
     }
 
@@ -133,15 +131,16 @@ public class DeportesMadridUtils {
      * @return
      */
 
-    public static long sendNotificationToFirebase(String fcmKeyServer, Set<String> teamsUpdated) {
+    public static long sendNotificationToFirebase(String fcmKeyServer, Set<String[]> teamsUpdated) {
         ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jsonData = new JSONObject();
         JSONObject jsonRoot = new JSONObject();
         try {
-            String teamsUpdatedStr = teamsUpdated.stream()
+            /*String teamsUpdatedStr = teamsUpdated.stream()
                     .map( n -> n.toString() )
                     .collect( Collectors.joining( DeportesMadridConstants.TEAMS_UPDATED_SEPARATOR ) );
-            jsonData.put("teams_updated", teamsUpdatedStr);
+                    */
+            jsonData.put("teams_updated", teamsUpdated);
             jsonRoot.put("to", "/topics/sync");
             jsonRoot.put("data", jsonData);
             return sendNotification(fcmKeyServer, jsonRoot);

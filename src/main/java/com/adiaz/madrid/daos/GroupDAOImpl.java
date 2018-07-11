@@ -110,4 +110,9 @@ public class GroupDAOImpl implements GroupDAO {
     public List<Group> findBySport(String sport) {
         return ofy().load().type(Group.class).filter("deporte", sport).list();
     }
+
+    @Override
+    public List<Group> findByCodTemporada(Integer codTemporada) {
+        return ofy().load().type(Group.class).filter("codTemporada", codTemporada).list();
+    }
 }

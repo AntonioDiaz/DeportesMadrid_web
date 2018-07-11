@@ -12,7 +12,7 @@
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Entidades<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/teams/list">Equipos</a></li>
-                    <li><a href="/places/list">Campos</a></li>
+                    <li><a href="/places/list">Pistas</a></li>
                     <li><a href="/groups/list">Grupos</a></li>
                     <li><a href="/groups/sports_list">Deportes</a></li>
                     <li><a href="/matches/list">Partidos</a></li>
