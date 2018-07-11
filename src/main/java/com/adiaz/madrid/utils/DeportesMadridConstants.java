@@ -5,8 +5,8 @@ public class DeportesMadridConstants {
     public static final String URL_CLASSIFICATION = "https://datos.madrid.es/egob/catalogo/211549-1-juegos-deportivos-actual.csv";
     public static final String URL_MATCHES_FAKE = "http://localhost:8080/catalogo/matches.csv";
     public static final String URL_CLASSIFICATION_FAKE = "http://localhost:8080/catalogo/classification.csv";
-    public static final String BUCKET_CLASSIFICATION = "deportes_madrid_classification";
-    public static final String BUCKET_MATCHES= "deportes_madrid_matches";
+    public static final String BUCKET_CLASSIFICATION = "deportes_madrid_classification_2018";
+    public static final String BUCKET_MATCHES= "deportes_madrid_matches_2018";
     public static final String PATH_ENQUE_TASK = "/releases/createReleaseTask";
     public static final Integer PAGINATION_RECORDS = 500;
     public static final String CACHE_TEAMS_LIST = "TEAMS_LIST";
