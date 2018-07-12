@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UpdateEntityClassification extends UpdateEntityAbstract<ClassificationEntry> {
@@ -37,7 +39,8 @@ public class UpdateEntityClassification extends UpdateEntityAbstract<Classificat
     }
 
     @Override
-    void addEntityToMap(Map map, String line) throws Exception {
+    Set<String[]> addEntityToMap(Map map, String line) throws Exception {
+        Set<String[]> teamsUpdated = new HashSet<>();
         ClassificationLineEntity classificationLineEntity = new ClassificationLineEntity(line);
         Integer codTemporada = classificationLineEntity.getField00_codTemporada();
         String codCompeticion = classificationLineEntity.getField01_codCompeticion();
@@ -61,7 +64,10 @@ public class UpdateEntityClassification extends UpdateEntityAbstract<Classificat
         ClassificationEntry classificationEntryOriginal = classificationDAO.findById(idClassificationEntry);
         if (classificationEntryOriginal==null || !classificationEntry.equals(classificationEntryOriginal)) {
             map.put(idClassificationEntry, classificationEntry);
+            teamsUpdated.add(new String[]{classificationEntry.getIdTeam().toString(), idGroup});
+
         }
+        return teamsUpdated;
     }
 
     @Override

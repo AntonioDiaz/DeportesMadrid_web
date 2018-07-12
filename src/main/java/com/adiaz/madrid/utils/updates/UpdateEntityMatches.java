@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UpdateEntityMatches extends UpdateEntityAbstract<Match> {
@@ -39,7 +41,8 @@ public class UpdateEntityMatches extends UpdateEntityAbstract<Match> {
     }
 
     @Override
-    void addEntityToMap(Map map, String line) throws Exception {
+    Set<String[]> addEntityToMap(Map map, String line) throws Exception {
+        Set<String[]> teamsUpdated = new HashSet<>();
         MatchLineEntity matchLineEntity = new MatchLineEntity(line);
         Match match = new Match();
         //find group
@@ -68,15 +71,14 @@ public class UpdateEntityMatches extends UpdateEntityAbstract<Match> {
 
         if (matchOriginal==null || !matchOriginal.equals(match)) {
             map.put(match.getId(), match);
-            /*
             if (match.getTeamLocal()!=null) {
                 teamsUpdated.add(new String[]{match.getIdTeamLocal().toString(), idGroup});
             }
             if (match.getTeamVisitor()!=null) {
                 teamsUpdated.add(new String[]{match.getTeamVisitor().toString(), idGroup});
             }
-            */
         }
+        return teamsUpdated;
     }
 
     @Override
