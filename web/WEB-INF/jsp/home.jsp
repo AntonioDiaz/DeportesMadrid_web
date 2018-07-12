@@ -2,7 +2,7 @@
     <div class="col-sm-6">
         <button type="button" class="btn btn-default btn-block" onclick='window.location.href = "/releases/release_list"'>Lista actualizaciones</button>
         <button type="button" class="btn btn-default btn-block" onclick='window.location.href = "/releases/check"'>Comprobar actualización</button>
-        <button type="button" class="btn btn-default btn-block" onclick='window.location.href = "/parameters/list"'>Parametros</button>
+        <button type="button" class="btn btn-default btn-block" onclick='window.location.href = "/parameters/list"'>Parámetros</button>
         <button type="button" class="btn btn-default btn-block" onclick='window.location.href = "/notifications/send"'>Enviar notificación</button>
     </div>
     <div class="col-sm-6">
