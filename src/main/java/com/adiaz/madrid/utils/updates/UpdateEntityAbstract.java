@@ -47,7 +47,10 @@ public abstract class UpdateEntityAbstract <T> {
             linesCount++;
             if (getLinesProcessed(release)<=linesCount) {
                 try {
-                    teamsUpdated.addAll(addEntityToMap(map, line));
+                    Set<String[]> teamsSet = addEntityToMap(map, line);
+                    if (teamsSet!=null) {
+                        teamsUpdated.addAll(teamsSet);
+                    }
                 } catch (Exception e) {
                     logger.error("error update: line" + line, e);
                     addOneLineError(release);
