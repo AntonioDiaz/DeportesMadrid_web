@@ -1,6 +1,7 @@
 package com.adiaz.madrid.utils.updates;
 
 import com.adiaz.madrid.entities.Release;
+import com.adiaz.madrid.services.ReleaseManagerImpl;
 import com.adiaz.madrid.utils.entities.MatchLineEntity;
 import com.google.appengine.tools.cloudstorage.*;
 import org.apache.log4j.Logger;
@@ -11,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public abstract class UpdateEntityAbstract <T> {
+
+    private static final Logger logger = Logger.getLogger(UpdateEntityAbstract.class);
+
 
     /** Used below to determine the size of chucks to read in. Should be > 1kb and < 10MB */
     private static final int BUFFER_SIZE = 1024 * 1024;
@@ -45,6 +49,7 @@ public abstract class UpdateEntityAbstract <T> {
                 try {
                     teamsUpdated.addAll(addEntityToMap(map, line));
                 } catch (Exception e) {
+                    logger.error("error update: line" + line, e);
                     addOneLineError(release);
                 }
                 if (linesCount % INSERT_BLOCK_SIZE==0) {
