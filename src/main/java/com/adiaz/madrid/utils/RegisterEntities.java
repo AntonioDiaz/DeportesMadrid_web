@@ -43,7 +43,6 @@ public class RegisterEntities {
         ObjectifyService.register(Notification.class);
 
         /* clean DB. */
-        /*
         try {
             List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
             ofy().delete().keys(listRelease);
@@ -66,7 +65,6 @@ public class RegisterEntities {
         } finally {
             ofy().clear();
         }
-        */
         /* insert parameters */
         if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG)==null) {
             Parameter parameter = new Parameter();

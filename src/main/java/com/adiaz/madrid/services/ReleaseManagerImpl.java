@@ -180,10 +180,10 @@ public class ReleaseManagerImpl implements ReleaseManager {
             updateGroups.update(release, DeportesMadridConstants.BUCKET_MATCHES);
         }
         if (!release.getUpdatedMatches()) {
-            updateMatches.update(release, DeportesMadridConstants.BUCKET_MATCHES);
+            teamsUpdated.addAll(updateMatches.update(release, DeportesMadridConstants.BUCKET_MATCHES));
         }
         if (!release.getUpdatedClassification()) {
-            updateClassification.update(release, DeportesMadridConstants.BUCKET_CLASSIFICATION);
+            teamsUpdated.addAll(updateClassification.update(release, DeportesMadridConstants.BUCKET_CLASSIFICATION));
         }
         if (!release.getUpdatedTeamsGroups()) {
             updateEntityTeamsGroups.update(release, DeportesMadridConstants.BUCKET_MATCHES);

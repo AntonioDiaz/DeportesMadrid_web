@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UpdateEntityPlaces extends UpdateEntityAbstract <Place> {
@@ -37,7 +38,7 @@ public class UpdateEntityPlaces extends UpdateEntityAbstract <Place> {
     }
 
     @Override
-    void addEntityToMap(Map map, String line) throws Exception {
+    Set<String[]> addEntityToMap(Map map, String line) throws Exception {
         MatchLineEntity lineEntity = new MatchLineEntity(line);
         Place place = new Place();
         Long id = lineEntity.getField10_codCampo();
@@ -51,6 +52,7 @@ public class UpdateEntityPlaces extends UpdateEntityAbstract <Place> {
                 map.put(place.getId(), place);
             }
         }
+        return null;
     }
 
     @Override
