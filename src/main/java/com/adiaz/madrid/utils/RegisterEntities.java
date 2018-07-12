@@ -43,7 +43,6 @@ public class RegisterEntities {
         ObjectifyService.register(Notification.class);
 
         /* clean DB. */
-        /*
         try {
             List<Key<Release>> listRelease = ofy().load().type(Release.class).keys().list();
             ofy().delete().keys(listRelease);
@@ -66,7 +65,6 @@ public class RegisterEntities {
         } finally {
             ofy().clear();
         }
-        */
         /* insert parameters */
         if (parametersManager.queryByKey(DeportesMadridConstants.PARAMETER_DEBUG)==null) {
             Parameter parameter = new Parameter();
@@ -99,7 +97,7 @@ public class RegisterEntities {
         try {
             logger.info("Creating test user.");
             if (usersManager.queryAllUsers().isEmpty()) {
-                User user = new User("adiaz", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", true, true, false, true);
+                User user = new User("adiaz", "ab7e756f02822a9c5042240fecbb9af076e20b892b7c0749be7ab712d82b363f", true, true, false, true);
                 usersManager.addUser(user);
             }
         } catch (Exception ex) {

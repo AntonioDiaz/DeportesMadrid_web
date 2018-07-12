@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UpdateEntityTeamsGroups extends UpdateEntityAbstract<Team> {
@@ -32,7 +33,7 @@ public class UpdateEntityTeamsGroups extends UpdateEntityAbstract<Team> {
     }
 
     @Override
-    void addEntityToMap(Map map, String line) throws Exception {
+    Set<String[]> addEntityToMap(Map map, String line) throws Exception {
         MatchLineEntity lineEntity = new MatchLineEntity(line);
         Integer codTemporada = lineEntity.getField00_codTemporada();
         String codCompeticion = lineEntity.getField01_codCompeticion();
@@ -47,6 +48,7 @@ public class UpdateEntityTeamsGroups extends UpdateEntityAbstract<Team> {
                 map.put(teamLocal.getId(), teamLocal);
             }
         }
+        return null;
     }
 
     @Override

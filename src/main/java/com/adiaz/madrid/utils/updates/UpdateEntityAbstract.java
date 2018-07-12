@@ -8,10 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public abstract class UpdateEntityAbstract <T> {
 
@@ -32,10 +29,11 @@ public abstract class UpdateEntityAbstract <T> {
 
     abstract int getLinesProcessed(Release release);
     abstract void addOneLineError(Release release) throws Exception;
-    abstract void addEntityToMap(Map map, String line) throws Exception;
+    abstract Set<String[]> addEntityToMap(Map map, String line) throws Exception;
     abstract void insertEntities(Release release, Collection<T> entitiesToUpdate, int linesUpdated, boolean ended) throws Exception;
 
-    public void update(Release release, String urlBucket) throws Exception {
+    public Set<String[]> update(Release release, String urlBucket) throws Exception {
+        Set<String[]> teamsUpdated = new HashSet<>();
         Scanner scanner = getScanner(release.getId(), urlBucket);
         scanner.nextLine();
         int linesCount = 1;
@@ -45,7 +43,7 @@ public abstract class UpdateEntityAbstract <T> {
             linesCount++;
             if (getLinesProcessed(release)<=linesCount) {
                 try {
-                    addEntityToMap(map, line);
+                    teamsUpdated.addAll(addEntityToMap(map, line));
                 } catch (Exception e) {
                     addOneLineError(release);
                 }
@@ -57,6 +55,7 @@ public abstract class UpdateEntityAbstract <T> {
         }
         insertEntities(release, map.values(), linesCount, true);
         scanner.close();
+        return teamsUpdated;
     }
 
     private Scanner getScanner(String releaseId, String bucket) {

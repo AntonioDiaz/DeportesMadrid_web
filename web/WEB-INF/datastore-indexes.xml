@@ -18,4 +18,9 @@
         <property name="idTeamLocal" direction="asc"/>
         <property name="idGroup" direction="asc"/>
     </datastore-index>
+    <datastore-index kind="MATCH_ENTITY" ancestor="false" source="manual">
+        <property name="idGroup" direction="asc"/>
+        <property name="numWeek" direction="asc"/>
+        <property name="numMatch" direction="asc"/>
+    </datastore-index>
 </datastore-indexes>
