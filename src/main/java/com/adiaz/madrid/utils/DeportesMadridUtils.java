@@ -114,23 +114,6 @@ public class DeportesMadridUtils {
         return df.format(date);
     }
 
-
-    /**
-     *
-     curl --header "Authorization: key="AAAAbG1pzOw:APA91bGHMxUF_kX8JkXWduKc4suJoiAZL8Vp3WBBuu061Q8aXMTTMQcY_Wic6sFyIlLi80nUO8Wt4t8y1RKZVGjl7vsgOVLksxv0LK9Fr9BysS8wgl0kLf3aKYtmhYf3r2OnihGAMl5exdJEPwJo7dE3Z-k0DuGr4Q" \
-     --header Content-Type:"application/json" \
-     https://gcm-http.googleapis.com/gcm/send \
-     -d "{\"registration_ids\":[\"ABC\"]}"
-
-
-     curl --header "Authorization: key=$server_key" \
-     --header Content-Type:"application/json" \
-     https://gcm-http.googleapis.com/gcm/send \
-     -d "{\"to\":\"/topics/toma\", \"data\":{\"message\":\"this is a gcm topic message\"}}"
-     * @param fcmKeyServer
-     * @return
-     */
-
     public static long sendNotificationToFirebase(String fcmKeyServer, Set<String[]> teamsUpdated) {
         ObjectMapper objectMapper = new ObjectMapper();
         JSONObject jsonData = new JSONObject();
